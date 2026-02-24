@@ -33,12 +33,15 @@ function alive(v: Viewer): boolean {
   return !!v && !v.isDestroyed() && !!v.dataSources;
 }
 
+export type NexusData = Record<string, { nexus: boolean }>;
+
 export class LayerManager {
   private viewer: Viewer;
   private countriesLayer: GeoJsonDataSource | null = null;
   private subregionsLayer: GeoJsonDataSource | null = null;
   private highlightLayer: GeoJsonDataSource | null = null;
   private entityIndex = new Map<string, Entity>();
+  private nexusData: NexusData | null = null;
 
   constructor(viewer: Viewer) {
     this.viewer = viewer;
@@ -65,13 +68,11 @@ export class LayerManager {
 
   /* ── Subregions ──────────────────────────────────────────────────── */
 
-  async setSubregions(geo: RegionFeatureCollection): Promise<void> {
+  async setSubregions(geo: RegionFeatureCollection, parentCountryId?: string): Promise<void> {
     if (!alive(this.viewer)) return;
-    this.clearHighlight();    // remove country-level highlight so it doesn't cover subregion outlines
+    this.clearHighlight();
     this.clearSubregions();
 
-    // Yield to the render loop so any in-progress camera flight can
-    // paint a few frames before the heavy GeoJsonDataSource.load blocks.
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
     if (!alive(this.viewer)) return;
 
@@ -86,6 +87,16 @@ export class LayerManager {
     this.viewer.dataSources.add(ds);
     this.subregionsLayer = ds;
     this.rebuildIndex(ds);
+
+    if (parentCountryId && this.nexusData) {
+      const parentEntry = this.nexusData[parentCountryId];
+      const color = parentEntry?.nexus ? getNexusBreachedColor() : getNexusClearColor();
+      for (const entity of ds.entities.values) {
+        if (entity.polygon) {
+          entity.polygon.material = new ColorMaterialProperty(color);
+        }
+      }
+    }
   }
 
   clearSubregions(): void {
@@ -147,7 +158,8 @@ export class LayerManager {
 
   /* ── Nexus exposure coloring ─────────────────────────────────────── */
 
-  applyNexusColors(nexusData: Record<string, { nexus: boolean }>): void {
+  applyNexusColors(nexusData: NexusData): void {
+    this.nexusData = nexusData;
     if (!this.countriesLayer) return;
     const breached = getNexusBreachedColor();
     const clear = getNexusClearColor();

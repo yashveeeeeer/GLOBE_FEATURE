@@ -83,14 +83,9 @@ export default function App() {
 
       if (!viewerOk(viewerRef.current)) return;
 
-      // 3) Load countries (TopoJSON if available, fallback to GeoJSON)
+      // 3) Load countries GeoJSON (skip TopoJSON to avoid reprojection artifacts)
       const base = import.meta.env.BASE_URL;
-      let geo: RegionFeatureCollection;
-      try {
-        geo = await loadDataset(`${base}data/countries.topo.json`);
-      } catch {
-        geo = await loadDataset(`${base}data/countries.geo.json`);
-      }
+      const geo = await loadDataset(`${base}data/countries.geo.json`);
       countriesRef.current = geo;
       setFocusGeometry(geo);
 
@@ -197,7 +192,7 @@ export default function App() {
               const sub = await loadDataset(entry.childDatasetPath);
               if (!cancelled && viewerOk(viewerRef.current)) {
                 lm.clearHighlight();
-                await lm.setSubregions(sub);
+                await lm.setSubregions(sub, selectedCountryId);
                 setFocusGeometry(sub);
                 // No country highlight here — the subregion outlines
                 // ARE the visual feedback. A country-level fill would
