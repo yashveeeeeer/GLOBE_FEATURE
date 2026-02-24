@@ -34,9 +34,9 @@ export function getSelectedOutlineColor(): Color {
 /* ── Nexus exposure ────────────────────────────────────────────────── */
 
 export const NEXUS_BREACHED_FILL = "#EF4444";
-export const NEXUS_BREACHED_ALPHA = 0.35;
+const NEXUS_BREACHED_ALPHA = 0.35;
 export const NEXUS_CLEAR_FILL = "#22C55E";
-export const NEXUS_CLEAR_ALPHA = 0.15;
+const NEXUS_CLEAR_ALPHA = 0.15;
 
 export function getNexusBreachedColor(): Color {
   return Color.fromCssColorString(NEXUS_BREACHED_FILL).withAlpha(NEXUS_BREACHED_ALPHA);
@@ -44,14 +44,4 @@ export function getNexusBreachedColor(): Color {
 
 export function getNexusClearColor(): Color {
   return Color.fromCssColorString(NEXUS_CLEAR_FILL).withAlpha(NEXUS_CLEAR_ALPHA);
-}
-
-/* ── Hovered region (future) ─────────────────────────────────────────── */
-
-export const HOVERED_OUTLINE_WIDTH = 2;
-export function getHoveredFillColor(): Color {
-  return Color.fromCssColorString(tokens().warning).withAlpha(0.12);
-}
-export function getHoveredOutlineColor(): Color {
-  return Color.fromCssColorString(tokens().warning).withAlpha(0.8);
 }

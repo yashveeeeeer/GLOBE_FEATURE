@@ -133,19 +133,3 @@ export function disableAutoRotate(): void {
   _viewer = null;
 }
 
-/**
- * Temporarily pause auto-rotation (e.g. during a camera flight).
- * Resumes after the idle timeout.
- */
-export function pauseAutoRotate(): void {
-  stopRotation();
-  clearIdleTimer();
-  scheduleResume();
-}
-
-/**
- * Check if auto-rotation is currently enabled.
- */
-export function isAutoRotateEnabled(): boolean {
-  return _enabled;
-}

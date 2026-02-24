@@ -81,18 +81,6 @@ export function focusToRegion(
 }
 
 /**
- * Fly to a rectangle from a bbox (antimeridian-safe).
- */
-export function focusToBBox(
-  viewer: Viewer,
-  bbox: BBox,
-  duration = DEFAULT_DURATION,
-  padding = DEFAULT_PADDING,
-): boolean {
-  return focusBBox(viewer, bbox, duration, padding);
-}
-
-/**
  * Fly camera to the default world view.
  */
 export function focusToWorld(viewer: Viewer): void {

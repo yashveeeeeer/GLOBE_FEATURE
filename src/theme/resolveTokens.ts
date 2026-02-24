@@ -26,7 +26,6 @@ export function resolveTokens(): TokenSet {
       | undefined;
     if (mod?.default) {
       overrides = mod.default;
-      console.log("[theme] Loaded generated tokens:", Object.keys(overrides).length, "overrides");
     }
   } catch {
     // No generated tokens — use defaults

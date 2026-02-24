@@ -41,11 +41,6 @@ export async function loadRegionIndex(): Promise<RegionIndex> {
   return _index;
 }
 
-/** Synchronous accessor — null if not yet loaded. */
-export function getRegionIndex(): RegionIndex | null {
-  return _index;
-}
-
 /** Get a single entry by ID. */
 export function getRegionEntry(id: string): RegionIndexEntry | undefined {
   return _index?.[id];

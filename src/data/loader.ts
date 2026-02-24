@@ -14,7 +14,6 @@ import { parseTopoJson } from "./topo";
 /* ── Configuration ───────────────────────────────────────────────────── */
 
 const MAX_CACHE_ENTRIES = 20;
-const LARGE_FILE_WARN_BYTES = 5 * 1024 * 1024; // 5 MB
 
 /* ── LRU Cache ───────────────────────────────────────────────────────── */
 
@@ -42,16 +41,6 @@ function cacheSet(key: string, val: RegionFeatureCollection): void {
     const evict = _accessOrder.shift()!;
     _cache.delete(evict);
   }
-}
-
-/* ── Large file warning callback ─────────────────────────────────────── */
-
-let _onLargeFile: ((path: string, bytes: number) => void) | null = null;
-
-export function onLargeFileWarning(
-  cb: (path: string, bytes: number) => void,
-): void {
-  _onLargeFile = cb;
 }
 
 /* ── Web Worker for off-thread parsing ───────────────────────────────── */
@@ -135,14 +124,6 @@ async function parseOnMainThread(
     throw new Error(`Failed to load dataset ${path}: ${res.status}`);
   }
 
-  const cl = res.headers.get("content-length");
-  if (cl) {
-    const bytes = parseInt(cl, 10);
-    if (bytes > LARGE_FILE_WARN_BYTES && _onLargeFile) {
-      _onLargeFile(path, bytes);
-    }
-  }
-
   const raw = await res.json();
 
   const isTopoJson =
@@ -184,10 +165,3 @@ export async function loadDataset(
   return fc;
 }
 
-/**
- * Clear the dataset cache (useful for testing).
- */
-export function clearDatasetCache(): void {
-  _cache.clear();
-  _accessOrder.length = 0;
-}

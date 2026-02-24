@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizeBBox, computeCentroidFromBBox, padBBox } from "../antimeridian";
+import { normalizeBBox, padBBox } from "../antimeridian";
 
 describe("normalizeBBox", () => {
   it("returns normal bbox unchanged", () => {
@@ -24,21 +24,6 @@ describe("normalizeBBox", () => {
     const bbox = normalizeBBox([0, 0, 180, 45]);
     expect(bbox[0]).toBe(0);
     expect(bbox[2]).toBe(180);
-  });
-});
-
-describe("computeCentroidFromBBox", () => {
-  it("computes centroid for normal bbox", () => {
-    const c = computeCentroidFromBBox([10, 20, 30, 40]);
-    expect(c[0]).toBe(20); // lon
-    expect(c[1]).toBe(30); // lat
-  });
-
-  it("computes centroid for antimeridian-crossing bbox (west > east)", () => {
-    // west=170, east=-170 → short arc crosses 180°
-    const c = computeCentroidFromBBox([170, -10, -170, 10]);
-    expect(c[0]).toBe(180); // midpoint of 170..190(=-170)
-    expect(c[1]).toBe(0);
   });
 });
 

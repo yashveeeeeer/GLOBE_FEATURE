@@ -5,7 +5,7 @@
  * them to the shorter longitude arc.
  */
 
-import type { BBox, Centroid } from "../types";
+import type { BBox } from "../types";
 
 /**
  * Normalize a bbox so it uses the shorter longitude arc.
@@ -32,25 +32,6 @@ export function normalizeBBox(bbox: BBox): BBox {
   }
 
   return [west, south, east, north];
-}
-
-/**
- * Compute a centroid from a bbox, handling antimeridian crossing.
- */
-export function computeCentroidFromBBox(bbox: BBox): Centroid {
-  const [west, south, east, north] = bbox;
-  const lat = (south + north) / 2;
-
-  let lon: number;
-  if (west > east) {
-    // Antimeridian crossing — average via the short arc
-    lon = (west + east + 360) / 2;
-    if (lon > 180) lon -= 360;
-  } else {
-    lon = (west + east) / 2;
-  }
-
-  return [lon, lat];
 }
 
 /**

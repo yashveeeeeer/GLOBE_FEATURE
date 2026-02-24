@@ -66,9 +66,4 @@ export function injectTheme(): void {
     }
   }
 
-  console.log(
-    "[theme] Injected",
-    Object.keys(overrides).length,
-    "generated token overrides",
-  );
 }

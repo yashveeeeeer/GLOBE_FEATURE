@@ -4,12 +4,6 @@
 
 export { createViewer } from "./createViewer";
 export { LayerManager } from "./layerManager";
-export { focusToRegion, focusToBBox, focusToWorld, setFocusGeometry } from "./focus";
-export {
-  enableAutoRotate,
-  disableAutoRotate,
-  pauseAutoRotate,
-  isAutoRotateEnabled,
-} from "./autorotate";
-export { applyGlobeTheme, isLightTheme } from "./globeTheme";
-export { setGlobeImagery } from "./imagery";
+export { focusToRegion, focusToWorld, setFocusGeometry } from "./focus";
+export { enableAutoRotate, disableAutoRotate } from "./autorotate";
+export { isLightTheme } from "./globeTheme";
