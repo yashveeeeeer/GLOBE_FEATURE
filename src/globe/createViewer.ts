@@ -71,8 +71,14 @@ export function createViewer(container: HTMLElement | string): Viewer {
   // Limit zoom range so the user can't zoom out past a reasonable distance
   // or zoom in closer than ~500m. Prevents the globe becoming a tiny dot
   // or the camera clipping into the surface.
-  scene.screenSpaceCameraController.maximumZoomDistance = 25_000_000; // 25,000 km
-  scene.screenSpaceCameraController.minimumZoomDistance = 500;        // 500 m
+  const controller = scene.screenSpaceCameraController;
+  controller.maximumZoomDistance = 25_000_000;
+  controller.minimumZoomDistance = 500;
+  controller.enableZoom = true;
+  controller.enableRotate = true;
+  controller.enableTilt = true;
+  controller.enableLook = true;
+  controller.enableTranslate = true;
 
   // Force-hide Cesium's error panel and any other element showing "connection failed"
   // (except our sidebar). Search entire document.
