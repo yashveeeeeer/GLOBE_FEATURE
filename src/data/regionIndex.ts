@@ -20,27 +20,24 @@ let _index: RegionIndex | null = null;
 export async function loadRegionIndex(): Promise<RegionIndex> {
   if (_index) return _index;
 
-  // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/50fbe4fa-ba9a-46ba-9d26-eb9e995210d7',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'regionIndex.ts:loadRegionIndex',message:'fetch region_index starting',data:{path:'/data/region_index.json'},timestamp:Date.now(),hypothesisId:'B',runId:'run1'})}).catch(()=>{});
-  // #endregion
-  let res: Response;
-  try {
-    res = await fetch("/data/region_index.json");
-  } catch (e) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/50fbe4fa-ba9a-46ba-9d26-eb9e995210d7',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'regionIndex.ts:loadRegionIndex',message:'fetch threw',data:{err: String(e), message: e instanceof Error ? e.message : ''},timestamp:Date.now(),hypothesisId:'B',runId:'run1'})}).catch(()=>{});
-    // #endregion
-    throw e;
-  }
+  const url = `${import.meta.env.BASE_URL}data/region_index.json`;
+  const res = await fetch(url);
   if (!res.ok) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/50fbe4fa-ba9a-46ba-9d26-eb9e995210d7',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'regionIndex.ts:loadRegionIndex',message:'res not ok',data:{status:res.status, statusText:res.statusText},timestamp:Date.now(),hypothesisId:'B',runId:'run1'})}).catch(()=>{});
-    // #endregion
     throw new Error(`Failed to load region index: ${res.status} ${res.statusText}`);
   }
 
   const raw = await res.json();
   _index = validateRegionIndex(raw) as RegionIndex;
+
+  // Rewrite childDatasetPath entries to include the base URL so fetches
+  // work on both localhost and subpath deployments (e.g. GitHub Pages).
+  const base = import.meta.env.BASE_URL;
+  for (const entry of Object.values(_index)) {
+    if (entry.childDatasetPath?.startsWith("/")) {
+      entry.childDatasetPath = `${base}${entry.childDatasetPath.slice(1)}`;
+    }
+  }
+
   return _index;
 }
 

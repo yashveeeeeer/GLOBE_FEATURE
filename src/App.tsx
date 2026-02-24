@@ -74,19 +74,6 @@ export default function App() {
       setErrorRaw(null);
       setGlobeReady(false);
 
-      // If opened via file:// or not from localhost, show instructions and skip
-      // so we never attempt fetch (avoids browser "connection failed" / fetch errors).
-      const { protocol, hostname } = window.location;
-      const isLocal =
-        hostname === "localhost" || hostname === "127.0.0.1" || hostname === "";
-      if (protocol === "file:" || !isLocal) {
-        setError(
-          "Open this app via the dev server. Run: npm run dev or .\\start-dev.ps1 — then open http://localhost:5173 in your browser."
-        );
-        setGlobeReady(true);
-        return;
-      }
-
       // 1) Create viewer + layer manager
       if (!viewerOk(viewerRef.current) && mountRef.current) {
         viewerRef.current = createViewer(mountRef.current);
@@ -100,11 +87,12 @@ export default function App() {
       if (!viewerOk(viewerRef.current)) return;
 
       // 3) Load countries (TopoJSON if available, fallback to GeoJSON)
+      const base = import.meta.env.BASE_URL;
       let geo: RegionFeatureCollection;
       try {
-        geo = await loadDataset("/data/countries.topo.json");
+        geo = await loadDataset(`${base}data/countries.topo.json`);
       } catch {
-        geo = await loadDataset("/data/countries.geo.json");
+        geo = await loadDataset(`${base}data/countries.geo.json`);
       }
       countriesRef.current = geo;
       setFocusGeometry(geo);
@@ -130,8 +118,8 @@ export default function App() {
       // dev-server instructions; others get a generic message (details stay in console).
       const finalMessage =
         isConnectionFailed
-          ? "Can't reach the app. Start the dev server (npm run dev or .\\start-dev.ps1), then open http://localhost:5173 in your browser."
-          : `Failed to load. (See console.) Start the dev server and open http://localhost:5173.`;
+          ? "Can't reach the data files. Check your network connection or try refreshing."
+          : "Failed to load. Check the browser console for details.";
       setError(finalMessage);
       setErrorRaw(raw); // diagnostic: exact error so we can fix the right source
       setGlobeReady(true);

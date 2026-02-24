@@ -5,15 +5,16 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 const cesiumSource = "node_modules/cesium/Build/Cesium";
 const cesiumBaseUrl = "cesiumStatic";
 
+const base = process.env.GITHUB_ACTIONS ? "/GLOBE_FEATURE/" : "/";
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  base,
   define: {
-    // CesiumJS reads this global to locate its static assets (workers, textures, etc.)
-    CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`),
+    CESIUM_BASE_URL: JSON.stringify(`${base}${cesiumBaseUrl}`),
   },
   plugins: [
     react(),
-    // Copy Cesium static assets so workers & textures load at runtime
     viteStaticCopy({
       targets: [
         { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
