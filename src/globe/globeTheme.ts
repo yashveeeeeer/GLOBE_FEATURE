@@ -13,17 +13,20 @@ export function applyGlobeTheme(viewer: Viewer, isLight: boolean): void {
 
   const scene = viewer.scene;
 
+  // Day: soft sky-blue backdrop; Night: deep space black
   scene.backgroundColor = Color.fromCssColorString(
-    isLight ? "#F8FAFC" : "#0B0F1A",
+    isLight ? "#87CEEB" : "#0B0F1A",
   );
 
   scene.globe.baseColor = Color.fromCssColorString(
     isLight ? "#DBEAFE" : "#1a1d2e",
   );
 
-  if (scene.skyAtmosphere) scene.skyAtmosphere.show = !isLight;
-  scene.globe.showGroundAtmosphere = !isLight;
+  // Atmosphere glow visible in both modes
+  if (scene.skyAtmosphere) scene.skyAtmosphere.show = true;
+  scene.globe.showGroundAtmosphere = true;
 
+  // Stars only at night
   if (scene.skyBox) {
     scene.skyBox.show = !isLight;
   }
