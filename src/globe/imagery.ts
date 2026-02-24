@@ -1,24 +1,18 @@
 /**
  * ── Imagery Providers ─────────────────────────────────────────────────
  *
- * Day:   Cesium's bundled Natural Earth II tiles (no external service).
- * Night: NASA GIBS VIIRS Black Marble (free, no API key).
+ * Day:   Cesium's bundled Natural Earth II tiles (local, no network).
+ * Night: NASA GIBS VIIRS City Lights (WebMercator, free, no API key).
  */
 
 import {
   type Viewer,
   type ImageryLayer,
   TileMapServiceImageryProvider,
-  UrlTemplateImageryProvider,
-  GeographicTilingScheme,
+  WebMapTileServiceImageryProvider,
+  WebMercatorTilingScheme,
   Credit,
 } from "cesium";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-const NIGHT_URL =
-  "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/" +
-  "VIIRS_Black_Marble/default/2016-01-01/500m/{z}/{y}/{x}.png";
 
 async function createDayProvider(): Promise<TileMapServiceImageryProvider> {
   return TileMapServiceImageryProvider.fromUrl(
@@ -26,17 +20,21 @@ async function createDayProvider(): Promise<TileMapServiceImageryProvider> {
   );
 }
 
-function createNightProvider(): UrlTemplateImageryProvider {
-  return new UrlTemplateImageryProvider({
-    url: NIGHT_URL,
-    tilingScheme: new GeographicTilingScheme(),
+function createNightProvider(): WebMapTileServiceImageryProvider {
+  return new WebMapTileServiceImageryProvider({
+    url: "https://map1.vis.earthdata.nasa.gov/wmts-webmerc/VIIRS_CityLights_2012/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg",
+    layer: "VIIRS_CityLights_2012",
+    style: "default",
+    tileMatrixSetID: "GoogleMapsCompatible_Level8",
     maximumLevel: 8,
+    format: "image/jpeg",
+    tilingScheme: new WebMercatorTilingScheme(),
     credit: new Credit("NASA EOSDIS GIBS"),
   });
 }
 
 /**
- * Set the globe imagery to day (Natural Earth II) or night (Black Marble).
+ * Set the globe imagery to day (Natural Earth II) or night (City Lights).
  * Removes all existing imagery layers first.
  */
 export async function setGlobeImagery(
