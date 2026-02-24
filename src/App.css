@@ -408,6 +408,54 @@ body,
   outline-offset: 2px;
 }
 
+/* ── Nexus Legend ────────────────────────────────────────────────────── */
+
+.nexus-legend {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--surface-1) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+.nexus-legend__title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.nexus-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nexus-legend__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.nexus-legend__label {
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {

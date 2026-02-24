@@ -14,6 +14,8 @@ import {
   Color,
   type Scene,
 } from "cesium";
+import { setGlobeImagery } from "./imagery";
+import { isLightTheme } from "./globeTheme";
 
 /**
  * Create a Cesium Viewer mounted into the given container element.
@@ -94,6 +96,8 @@ export function createViewer(container: HTMLElement | string): Viewer {
     typeof container === "string" ? document.querySelector(container) : container;
   if (root) obs.observe(root, { childList: true, subtree: true });
   obs.observe(document.body, { childList: true, subtree: true });
+
+  setGlobeImagery(viewer, isLightTheme());
 
   return viewer;
 }

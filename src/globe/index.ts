@@ -12,3 +12,4 @@ export {
   isAutoRotateEnabled,
 } from "./autorotate";
 export { applyGlobeTheme, isLightTheme } from "./globeTheme";
+export { setGlobeImagery } from "./imagery";

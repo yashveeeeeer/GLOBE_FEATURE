@@ -6,30 +6,29 @@
  */
 
 import { type Viewer, Color } from "cesium";
+import { setGlobeImagery } from "./imagery";
 
 export function applyGlobeTheme(viewer: Viewer, isLight: boolean): void {
   if (!viewer || viewer.isDestroyed()) return;
 
   const scene = viewer.scene;
 
-  // Space background — match sidebar
   scene.backgroundColor = Color.fromCssColorString(
     isLight ? "#F8FAFC" : "#0B0F1A",
   );
 
-  // Globe base color (oceans/land with no imagery)
   scene.globe.baseColor = Color.fromCssColorString(
     isLight ? "#DBEAFE" : "#1a1d2e",
   );
 
-  // Atmosphere glow ring
   if (scene.skyAtmosphere) scene.skyAtmosphere.show = !isLight;
   scene.globe.showGroundAtmosphere = !isLight;
 
-  // Stars
   if (scene.skyBox) {
     scene.skyBox.show = !isLight;
   }
+
+  setGlobeImagery(viewer, isLight);
 }
 
 /**

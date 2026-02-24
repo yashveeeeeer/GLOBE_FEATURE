@@ -1,0 +1,20 @@
+{
+  "US": { "nexus": true, "label": "Breached" },
+  "GB": { "nexus": true, "label": "Breached" },
+  "DE": { "nexus": true, "label": "Breached" },
+  "FR": { "nexus": true, "label": "Breached" },
+  "IN": { "nexus": true, "label": "Breached" },
+  "JP": { "nexus": true, "label": "Breached" },
+  "CA": { "nexus": true, "label": "Breached" },
+  "AU": { "nexus": true, "label": "Breached" },
+  "BR": { "nexus": true, "label": "Breached" },
+  "SG": { "nexus": true, "label": "Breached" },
+  "IE": { "nexus": true, "label": "Breached" },
+  "NL": { "nexus": true, "label": "Breached" },
+  "CH": { "nexus": true, "label": "Breached" },
+  "KR": { "nexus": true, "label": "Breached" },
+  "MX": { "nexus": true, "label": "Breached" },
+  "IT": { "nexus": true, "label": "Breached" },
+  "ES": { "nexus": true, "label": "Breached" },
+  "SE": { "nexus": true, "label": "Breached" }
+}

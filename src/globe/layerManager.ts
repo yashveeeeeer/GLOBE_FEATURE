@@ -9,7 +9,13 @@
  * Maintains an entity index (regionId → Entity) for O(1) lookups.
  */
 
-import { type Viewer, GeoJsonDataSource, Color, type Entity } from "cesium";
+import {
+  type Viewer,
+  GeoJsonDataSource,
+  Color,
+  ColorMaterialProperty,
+  type Entity,
+} from "cesium";
 import type { RegionFeatureCollection } from "../types";
 import {
   getRegionOutlineColor,
@@ -17,6 +23,8 @@ import {
   getSelectedFillColor,
   getSelectedOutlineColor,
   SELECTED_OUTLINE_WIDTH,
+  getNexusBreachedColor,
+  getNexusClearColor,
 } from "./styles";
 import { isLightTheme } from "./globeTheme";
 
@@ -135,6 +143,22 @@ export class LayerManager {
   clearHighlight(): void {
     this.removeLayer(this.highlightLayer);
     this.highlightLayer = null;
+  }
+
+  /* ── Nexus exposure coloring ─────────────────────────────────────── */
+
+  applyNexusColors(nexusData: Record<string, { nexus: boolean }>): void {
+    if (!this.countriesLayer) return;
+    const breached = getNexusBreachedColor();
+    const clear = getNexusClearColor();
+
+    for (const entity of this.countriesLayer.entities.values) {
+      const id = entity.id;
+      if (!id || !entity.polygon) continue;
+      const entry = nexusData[id];
+      const color = entry?.nexus ? breached : clear;
+      entity.polygon.material = new ColorMaterialProperty(color);
+    }
   }
 
   /* ── Entity lookup ───────────────────────────────────────────────── */

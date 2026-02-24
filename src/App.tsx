@@ -32,6 +32,7 @@ import { Breadcrumb } from "./ui/Breadcrumb";
 import { RegionTable } from "./ui/RegionTable";
 import { ErrorBanner } from "./ui/ErrorBanner";
 import { ThemeToggle } from "./ui/ThemeToggle";
+import { NexusLegend } from "./ui/NexusLegend";
 import type { RegionFeatureCollection } from "./types";
 
 import "./App.css";
@@ -96,9 +97,20 @@ export default function App() {
       if (!viewerOk(viewerRef.current) || !layersRef.current) return;
       await layersRef.current.setCountries(geo);
 
+      // 4) Load nexus exposure data and apply colors
+      try {
+        const nexusRes = await fetch(`${base}data/nexus_exposure.json`);
+        if (nexusRes.ok) {
+          const nexusData = await nexusRes.json();
+          layersRef.current?.applyNexusColors(nexusData);
+        }
+      } catch {
+        console.warn("[App] Nexus data not available, skipping color overlay");
+      }
+
       if (!viewerOk(viewerRef.current)) return;
 
-      // 4) Auto-rotation
+      // 5) Auto-rotation
       enableAutoRotate(viewerRef.current);
       setGlobeReady(true);
     } catch (err) {
@@ -254,6 +266,7 @@ export default function App() {
     <div className="app">
       <div className="app__globe">
         <div className="app__globe-mount" ref={mountRef} />
+        {globeReady && <NexusLegend />}
         {!globeReady && (
           <div className="app__loading"><p>Loading globe…</p></div>
         )}
