@@ -23,7 +23,7 @@ export function applyGlobeTheme(viewer: Viewer, isLight: boolean): void {
   );
 
   // Atmosphere glow ring
-  scene.skyAtmosphere.show = !isLight;
+  if (scene.skyAtmosphere) scene.skyAtmosphere.show = !isLight;
   scene.globe.showGroundAtmosphere = !isLight;
 
   // Stars

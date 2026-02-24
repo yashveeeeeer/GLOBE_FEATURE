@@ -182,7 +182,7 @@ export class LayerManager {
     }
   }
 
-  private rebuildIndex(ds: GeoJsonDataSource): void {
+  private rebuildIndex(_ds: GeoJsonDataSource): void {
     // Clear existing entries for this data source
     // (simple approach: rebuild the whole index from all active sources)
     this.entityIndex.clear();

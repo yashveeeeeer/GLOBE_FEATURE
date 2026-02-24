@@ -27,8 +27,6 @@ import {
   setFocusGeometry,
   enableAutoRotate,
   disableAutoRotate,
-  applyGlobeTheme,
-  isLightTheme,
 } from "./globe";
 import { Breadcrumb } from "./ui/Breadcrumb";
 import { RegionTable } from "./ui/RegionTable";
@@ -58,7 +56,6 @@ export default function App() {
   const [globeReady, setGlobeReady] = useState(false);
   const [subLoading, setSubLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [errorRaw, setErrorRaw] = useState<string | null>(null);
 
   /* ── Zustand ─────────────────────────────────────────────────────── */
 
@@ -71,7 +68,6 @@ export default function App() {
   const boot = useCallback(async () => {
     try {
       setError(null);
-      setErrorRaw(null);
       setGlobeReady(false);
 
       // 1) Create viewer + layer manager
@@ -121,7 +117,6 @@ export default function App() {
           ? "Can't reach the data files. Check your network connection or try refreshing."
           : "Failed to load. Check the browser console for details.";
       setError(finalMessage);
-      setErrorRaw(raw); // diagnostic: exact error so we can fix the right source
       setGlobeReady(true);
     }
   }, []);
@@ -274,7 +269,7 @@ export default function App() {
         </header>
 
         {error ? (
-          <ErrorBanner message={error} rawMessage={errorRaw} onRetry={boot} />
+          <ErrorBanner message={error} onRetry={boot} />
         ) : (
           <RegionTable dataVersion={dataVersion} loading={subLoading} />
         )}

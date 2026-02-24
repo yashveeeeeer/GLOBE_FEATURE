@@ -36,7 +36,7 @@ export function parseTopoJson(raw: unknown): RegionFeatureCollection {
 
   if (fc.type === "FeatureCollection") {
     for (const f of fc.features) {
-      features.push(normalizeFeature(f));
+      features.push(normalizeFeature(f as unknown as Record<string, unknown>));
     }
   } else {
     features.push(normalizeFeature(fc as never));

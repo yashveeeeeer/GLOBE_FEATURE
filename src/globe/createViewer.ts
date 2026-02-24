@@ -63,7 +63,7 @@ export function createViewer(container: HTMLElement | string): Viewer {
   scene.globe.baseColor = Color.fromCssColorString("#1a1d2e");
   scene.globe.showGroundAtmosphere = true;
   scene.globe.enableLighting = false;
-  scene.skyAtmosphere.show = true;
+  if (scene.skyAtmosphere) scene.skyAtmosphere.show = true;
   scene.backgroundColor = Color.fromCssColorString("#0b0e17");
 
   // Limit zoom range so the user can't zoom out past a reasonable distance

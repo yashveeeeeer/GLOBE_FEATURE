@@ -5,8 +5,8 @@
  * Search filters by name (case-insensitive).
  */
 
-import { useMemo, useCallback, useState, useRef, useEffect } from "react";
-import { List } from "react-window";
+import { useMemo, useCallback, useState } from "react";
+import { List, type RowComponentProps } from "react-window";
 import { useSelectionStore } from "../state/selectionStore";
 import { getRegionsByLevel, getRegionEntry } from "../data/regionIndex";
 import type { RegionIndexEntry } from "../types";
@@ -19,7 +19,6 @@ interface RegionTableProps {
 const ROW_HEIGHT = 44;
 const OVERSCAN = 5;
 
-/* ── Row data type passed to the row component via rowProps ─────────── */
 interface RowData {
   rows: Array<[string, RegionIndexEntry]>;
   selectedCountryId: string | null;
@@ -27,16 +26,8 @@ interface RowData {
   onRowClick: (id: string, entry: RegionIndexEntry) => void;
 }
 
-/* ── Row component (react-window v2: receives index, style, + rowProps) */
-function RowComponent({
-  index,
-  style,
-  ...rowProps
-}: {
-  index: number;
-  style: React.CSSProperties;
-} & RowData) {
-  const { rows, selectedCountryId, selectedSubregionId, onRowClick } = rowProps;
+function RowComponent(props: RowComponentProps<RowData>) {
+  const { index, style, rows, selectedCountryId, selectedSubregionId, onRowClick } = props;
   const item = rows[index];
   if (!item) return null;
   const [id, entry] = item;
@@ -74,21 +65,6 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
   } = useSelectionStore();
 
   const [search, setSearch] = useState("");
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [listHeight, setListHeight] = useState(400);
-
-  // Measure available height for the virtual list
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const obs = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setListHeight(entry.contentRect.height);
-      }
-    });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   /* ── Compute rows ────────────────────────────────────────────────── */
 
@@ -164,15 +140,13 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
       </div>
 
       {/* Virtualized list */}
-      <div className="region-table__body" ref={containerRef}>
+      <div className="region-table__body">
         {rows.length === 0 ? (
           <div className="region-table__empty">{emptyMessage}</div>
         ) : (
           <List
-            height={listHeight}
             rowCount={rows.length}
             rowHeight={ROW_HEIGHT}
-            width="100%"
             overscanCount={OVERSCAN}
             rowComponent={RowComponent}
             rowProps={{
@@ -180,7 +154,7 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
               selectedCountryId,
               selectedSubregionId,
               onRowClick: handleRowClick,
-            } satisfies RowData}
+            }}
           />
         )}
       </div>
