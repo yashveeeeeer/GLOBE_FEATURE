@@ -16,24 +16,28 @@ import {
   ColorMaterialProperty,
   type Entity,
 } from "cesium";
-import type { RegionFeatureCollection } from "../types";
+import type {
+  RegionFeatureCollection,
+  NexusStateData,
+  NexusFilters,
+} from "../types";
 import {
   getRegionOutlineColor,
   REGION_OUTLINE_WIDTH,
   getSelectedFillColor,
   getSelectedOutlineColor,
   SELECTED_OUTLINE_WIDTH,
-  getNexusBreachedColor,
-  getNexusClearColor,
+  getNexusCategoryColor,
 } from "./styles";
 import { isLightTheme } from "./globeTheme";
+import {
+  isCountryBreached,
+  getFilteredNexusCategory,
+} from "../state/nexusStore";
 
-/** Guard: viewer is alive and usable. */
 function alive(v: Viewer): boolean {
   return !!v && !v.isDestroyed() && !!v.dataSources;
 }
-
-export type NexusData = Record<string, { nexus: boolean }>;
 
 export class LayerManager {
   private viewer: Viewer;
@@ -41,7 +45,9 @@ export class LayerManager {
   private subregionsLayer: GeoJsonDataSource | null = null;
   private highlightLayer: GeoJsonDataSource | null = null;
   private entityIndex = new Map<string, Entity>();
-  private nexusData: NexusData | null = null;
+  private stateNexus: NexusStateData = {};
+  private countryIndex: Record<string, string[]> = {};
+  private filters: NexusFilters = { physical: true, economic: true };
 
   constructor(viewer: Viewer) {
     this.viewer = viewer;
@@ -88,14 +94,8 @@ export class LayerManager {
     this.subregionsLayer = ds;
     this.rebuildIndex(ds);
 
-    if (parentCountryId && this.nexusData) {
-      const parentEntry = this.nexusData[parentCountryId];
-      const color = parentEntry?.nexus ? getNexusBreachedColor() : getNexusClearColor();
-      for (const entity of ds.entities.values) {
-        if (entity.polygon) {
-          entity.polygon.material = new ColorMaterialProperty(color);
-        }
-      }
+    if (parentCountryId && Object.keys(this.stateNexus).length > 0) {
+      this.colorSubregionEntities(ds, parentCountryId);
     }
   }
 
@@ -158,18 +158,56 @@ export class LayerManager {
 
   /* ── Nexus exposure coloring ─────────────────────────────────────── */
 
-  applyNexusColors(nexusData: NexusData): void {
-    this.nexusData = nexusData;
-    if (!this.countriesLayer) return;
-    const breached = getNexusBreachedColor();
-    const clear = getNexusClearColor();
+  setNexusData(
+    stateNexus: NexusStateData,
+    countryIndex: Record<string, string[]>,
+  ): void {
+    this.stateNexus = stateNexus;
+    this.countryIndex = countryIndex;
+    this.recolorCountries();
+  }
 
+  recolorForFilters(filters: NexusFilters): void {
+    this.filters = filters;
+    this.recolorCountries();
+    this.recolorSubregions();
+  }
+
+  private recolorCountries(): void {
+    if (!this.countriesLayer) return;
     for (const entity of this.countriesLayer.entities.values) {
       const id = entity.id;
       if (!id || !entity.polygon) continue;
-      const entry = nexusData[id];
-      const color = entry?.nexus ? breached : clear;
+      const breached = isCountryBreached(
+        id, this.countryIndex, this.stateNexus, this.filters,
+      );
+      const color = breached
+        ? getNexusCategoryColor("both")
+        : getNexusCategoryColor("clear");
       entity.polygon.material = new ColorMaterialProperty(color);
+    }
+  }
+
+  private recolorSubregions(): void {
+    if (!this.subregionsLayer) return;
+    for (const entity of this.subregionsLayer.entities.values) {
+      const id = entity.id;
+      if (!id || !entity.polygon) continue;
+      const category = getFilteredNexusCategory(this.stateNexus[id], this.filters);
+      entity.polygon.material = new ColorMaterialProperty(
+        getNexusCategoryColor(category),
+      );
+    }
+  }
+
+  private colorSubregionEntities(ds: GeoJsonDataSource, _parentCountryId: string): void {
+    for (const entity of ds.entities.values) {
+      const id = entity.id;
+      if (!id || !entity.polygon) continue;
+      const category = getFilteredNexusCategory(this.stateNexus[id], this.filters);
+      entity.polygon.material = new ColorMaterialProperty(
+        getNexusCategoryColor(category),
+      );
     }
   }
 

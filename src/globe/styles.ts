@@ -31,17 +31,26 @@ export function getSelectedOutlineColor(): Color {
   return Color.fromCssColorString(tokens().accent).withAlpha(0.9);
 }
 
-/* ── Nexus exposure ────────────────────────────────────────────────── */
+/* ── Nexus exposure (multi-type) ──────────────────────────────────── */
 
-export const NEXUS_BREACHED_FILL = "#EF4444";
-const NEXUS_BREACHED_ALPHA = 0.35;
+export const NEXUS_PHYSICAL_FILL = "#8B5CF6";
+export const NEXUS_ECONOMIC_FILL = "#F59E0B";
+export const NEXUS_BOTH_FILL = "#EF4444";
 export const NEXUS_CLEAR_FILL = "#22C55E";
+
+const NEXUS_ACTIVE_ALPHA = 0.35;
 const NEXUS_CLEAR_ALPHA = 0.15;
 
-export function getNexusBreachedColor(): Color {
-  return Color.fromCssColorString(NEXUS_BREACHED_FILL).withAlpha(NEXUS_BREACHED_ALPHA);
-}
+export type NexusCategory = "both" | "physical" | "economic" | "clear";
 
-export function getNexusClearColor(): Color {
-  return Color.fromCssColorString(NEXUS_CLEAR_FILL).withAlpha(NEXUS_CLEAR_ALPHA);
+const NEXUS_CATEGORY_MAP: Record<NexusCategory, { fill: string; alpha: number }> = {
+  physical: { fill: NEXUS_PHYSICAL_FILL, alpha: NEXUS_ACTIVE_ALPHA },
+  economic: { fill: NEXUS_ECONOMIC_FILL, alpha: NEXUS_ACTIVE_ALPHA },
+  both:     { fill: NEXUS_BOTH_FILL,     alpha: NEXUS_ACTIVE_ALPHA },
+  clear:    { fill: NEXUS_CLEAR_FILL,    alpha: NEXUS_CLEAR_ALPHA },
+};
+
+export function getNexusCategoryColor(category: NexusCategory): Color {
+  const { fill, alpha } = NEXUS_CATEGORY_MAP[category];
+  return Color.fromCssColorString(fill).withAlpha(alpha);
 }

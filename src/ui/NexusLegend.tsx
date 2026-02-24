@@ -1,11 +1,42 @@
-import { NEXUS_BREACHED_FILL, NEXUS_CLEAR_FILL } from "../globe/styles";
+/**
+ * ── Nexus Legend ─────────────────────────────────────────────────────────
+ *
+ * Dynamic legend that reflects the active nexus filters.
+ * Shows only the relevant color categories.
+ */
 
-const items = [
-  { color: NEXUS_BREACHED_FILL, label: "Nexus Breached" },
-  { color: NEXUS_CLEAR_FILL, label: "No Nexus" },
-] as const;
+import { memo } from "react";
+import { useNexusStore } from "../state/nexusStore";
+import {
+  NEXUS_PHYSICAL_FILL,
+  NEXUS_ECONOMIC_FILL,
+  NEXUS_BOTH_FILL,
+  NEXUS_CLEAR_FILL,
+} from "../globe/styles";
 
-export function NexusLegend() {
+interface LegendItem {
+  color: string;
+  label: string;
+}
+
+export const NexusLegend = memo(function NexusLegend() {
+  const physical = useNexusStore((s) => s.filters.physical);
+  const economic = useNexusStore((s) => s.filters.economic);
+
+  const items: LegendItem[] = [];
+
+  if (physical && economic) {
+    items.push({ color: NEXUS_BOTH_FILL, label: "Both Nexus" });
+    items.push({ color: NEXUS_PHYSICAL_FILL, label: "Physical Only" });
+    items.push({ color: NEXUS_ECONOMIC_FILL, label: "Economic Only" });
+  } else if (physical) {
+    items.push({ color: NEXUS_PHYSICAL_FILL, label: "Physical Nexus" });
+  } else if (economic) {
+    items.push({ color: NEXUS_ECONOMIC_FILL, label: "Economic Nexus" });
+  }
+
+  items.push({ color: NEXUS_CLEAR_FILL, label: "No Nexus" });
+
   return (
     <div className="nexus-legend">
       <span className="nexus-legend__title">Exposure</span>
@@ -20,4 +51,4 @@ export function NexusLegend() {
       ))}
     </div>
   );
-}
+});

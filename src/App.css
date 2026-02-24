@@ -408,6 +408,142 @@ body,
   outline-offset: 2px;
 }
 
+/* ── Filter Panel ───────────────────────────────────────────────────── */
+
+.filter-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.filter-panel__label {
+  font-size: 0.675rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.filter-panel__toggles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-panel__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--muted);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.filter-panel__btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-1);
+}
+
+.filter-panel__btn--active {
+  border-color: var(--filter-color, var(--accent));
+  color: var(--text-1);
+  background: color-mix(in srgb, var(--filter-color, var(--accent)) 12%, var(--surface-1));
+}
+
+.filter-panel__btn--active:hover {
+  background: color-mix(in srgb, var(--filter-color, var(--accent)) 20%, var(--surface-1));
+}
+
+.filter-panel__indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--filter-color, var(--muted));
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+
+.filter-panel__btn--active .filter-panel__indicator {
+  opacity: 1;
+}
+
+.filter-panel__btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ── Nexus Tooltip ──────────────────────────────────────────────────── */
+
+.nexus-tooltip {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  padding: 10px 14px;
+  min-width: 160px;
+  background: color-mix(in srgb, var(--surface-1) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.nexus-tooltip__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.nexus-tooltip__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nexus-tooltip__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-2);
+}
+
+.nexus-tooltip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nexus-tooltip__val {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.nexus-tooltip__val--yes {
+  color: var(--text-1);
+}
+
+.nexus-tooltip__no-data {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
 /* ── Nexus Legend ────────────────────────────────────────────────────── */
 
 .nexus-legend {

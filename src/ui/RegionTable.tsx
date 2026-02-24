@@ -2,10 +2,10 @@
  * ── Region Table (master-detail) with search + virtualization ──────────
  *
  * Uses react-window v2 List for large lists.
- * Search filters by name (case-insensitive).
+ * Search is debounced to avoid re-computing rows on every keystroke.
  */
 
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef, memo } from "react";
 import { List, type RowComponentProps } from "react-window";
 import { useSelectionStore } from "../state/selectionStore";
 import { getRegionsByLevel, getRegionEntry } from "../data/regionIndex";
@@ -18,6 +18,7 @@ interface RegionTableProps {
 
 const ROW_HEIGHT = 44;
 const OVERSCAN = 5;
+const DEBOUNCE_MS = 200;
 
 interface RowData {
   rows: Array<[string, RegionIndexEntry]>;
@@ -55,7 +56,19 @@ function RowComponent(props: RowComponentProps<RowData>) {
   );
 }
 
-export function RegionTable({ dataVersion, loading }: RegionTableProps) {
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    timerRef.current = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timerRef.current);
+  }, [value, delay]);
+
+  return debounced;
+}
+
+export const RegionTable = memo(function RegionTable({ dataVersion, loading }: RegionTableProps) {
   const {
     selectionLevel,
     selectedCountryId,
@@ -65,8 +78,7 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
   } = useSelectionStore();
 
   const [search, setSearch] = useState("");
-
-  /* ── Compute rows ────────────────────────────────────────────────── */
+  const debouncedSearch = useDebouncedValue(search, DEBOUNCE_MS);
 
   const { rows, emptyMessage, levelLabel } = useMemo(() => {
     void dataVersion;
@@ -92,15 +104,13 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
 
     r.sort((a, b) => a[1].name.localeCompare(b[1].name));
 
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.trim().toLowerCase();
       r = r.filter(([, e]) => e.name.toLowerCase().includes(q));
     }
 
     return { rows: r, emptyMessage: msg, levelLabel: label };
-  }, [selectionLevel, selectedCountryId, selectedSubregionId, dataVersion, search]);
-
-  /* ── Row click ───────────────────────────────────────────────────── */
+  }, [selectionLevel, selectedCountryId, selectedSubregionId, dataVersion, debouncedSearch]);
 
   const handleRowClick = useCallback(
     (id: string, entry: RegionIndexEntry) => {
@@ -110,11 +120,8 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
     [selectCountry, selectSubregion],
   );
 
-  /* ── Render ──────────────────────────────────────────────────────── */
-
   return (
     <div className="region-table">
-      {/* Search */}
       <div className="region-table__search">
         <input
           type="text"
@@ -125,7 +132,6 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
         />
       </div>
 
-      {/* Count + loading */}
       <div className="region-table__toolbar">
         <span className="region-table__count">
           {rows.length} {levelLabel}
@@ -133,13 +139,11 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
         {loading && <span className="region-table__spinner" />}
       </div>
 
-      {/* Header */}
       <div className="region-table__header">
         <span className="region-table__header-name">Name</span>
         <span className="region-table__header-level">Level</span>
       </div>
 
-      {/* Virtualized list */}
       <div className="region-table__body">
         {rows.length === 0 ? (
           <div className="region-table__empty">{emptyMessage}</div>
@@ -160,4 +164,4 @@ export function RegionTable({ dataVersion, loading }: RegionTableProps) {
       </div>
     </div>
   );
-}
+});

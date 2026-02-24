@@ -2,15 +2,16 @@
  * ── Error banner component ─────────────────────────────────────────────
  *
  * Displays a friendly error message when data fails to load.
- * Used instead of crashing the app.
  */
+
+import { memo } from "react";
 
 interface ErrorBannerProps {
   message: string;
   onRetry?: () => void;
 }
 
-export function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
+export const ErrorBanner = memo(function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
   return (
     <div className="error-banner" role="alert">
       <span className="error-banner__icon">⚠</span>
@@ -26,4 +27,4 @@ export function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
       )}
     </div>
   );
-}
+});

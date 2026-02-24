@@ -71,3 +71,27 @@ export interface FocusOptions {
   padding?: number; // 0–1, default 0.1
   mode?: "bbox" | "sphere" | "auto";
 }
+
+/* ── Nexus exposure ─────────────────────────────────────────────────── */
+
+export interface NexusEntry {
+  physical: boolean;
+  economic: boolean;
+}
+
+/** Per-state nexus data, keyed by state ID (e.g. "US_CA"). */
+export type NexusStateData = Record<string, NexusEntry>;
+
+/** Per-country wrapper containing its states' nexus entries. */
+export interface NexusCountryData {
+  states: Record<string, NexusEntry>;
+}
+
+/** Shape of the nexus_exposure.json file: countryId → { states: { ... } }. */
+export type NexusDataFile = Record<string, NexusCountryData>;
+
+/** Active nexus filter toggles. */
+export interface NexusFilters {
+  physical: boolean;
+  economic: boolean;
+}

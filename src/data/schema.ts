@@ -33,8 +33,32 @@ export function validateRegionIndex(data: unknown) {
       "[schema] Region index validation warnings:",
       result.error.issues.slice(0, 5),
     );
-    // Don't crash — return the data as-is but log warnings
     return data as z.infer<typeof RegionIndexSchema>;
+  }
+  return result.data;
+}
+
+/* ── Nexus exposure schemas ─────────────────────────────────────────── */
+
+export const NexusEntrySchema = z.object({
+  physical: z.boolean(),
+  economic: z.boolean(),
+});
+
+export const NexusCountryDataSchema = z.object({
+  states: z.record(z.string(), NexusEntrySchema),
+});
+
+export const NexusDataFileSchema = z.record(z.string(), NexusCountryDataSchema);
+
+export function validateNexusData(data: unknown) {
+  const result = NexusDataFileSchema.safeParse(data);
+  if (!result.success) {
+    console.warn(
+      "[schema] Nexus data validation warnings:",
+      result.error.issues.slice(0, 5),
+    );
+    return data as z.infer<typeof NexusDataFileSchema>;
   }
   return result.data;
 }

@@ -1,20 +1,1666 @@
 {
-  "US": { "nexus": true, "label": "Breached" },
-  "GB": { "nexus": true, "label": "Breached" },
-  "DE": { "nexus": true, "label": "Breached" },
-  "FR": { "nexus": true, "label": "Breached" },
-  "IN": { "nexus": true, "label": "Breached" },
-  "JP": { "nexus": true, "label": "Breached" },
-  "CA": { "nexus": true, "label": "Breached" },
-  "AU": { "nexus": true, "label": "Breached" },
-  "BR": { "nexus": true, "label": "Breached" },
-  "SG": { "nexus": true, "label": "Breached" },
-  "IE": { "nexus": true, "label": "Breached" },
-  "NL": { "nexus": true, "label": "Breached" },
-  "CH": { "nexus": true, "label": "Breached" },
-  "KR": { "nexus": true, "label": "Breached" },
-  "MX": { "nexus": true, "label": "Breached" },
-  "IT": { "nexus": true, "label": "Breached" },
-  "ES": { "nexus": true, "label": "Breached" },
-  "SE": { "nexus": true, "label": "Breached" }
+  "US": {
+    "states": {
+      "US_AS": {
+        "physical": false,
+        "economic": false
+      },
+      "US_GU": {
+        "physical": false,
+        "economic": false
+      },
+      "US_MP": {
+        "physical": false,
+        "economic": false
+      },
+      "US_PR": {
+        "physical": false,
+        "economic": false
+      },
+      "US_AL": {
+        "physical": false,
+        "economic": false
+      },
+      "US_AK": {
+        "physical": false,
+        "economic": false
+      },
+      "US_AZ": {
+        "physical": false,
+        "economic": true
+      },
+      "US_AR": {
+        "physical": false,
+        "economic": false
+      },
+      "US_CA": {
+        "physical": true,
+        "economic": true
+      },
+      "US_CO": {
+        "physical": true,
+        "economic": true
+      },
+      "US_CT": {
+        "physical": false,
+        "economic": true
+      },
+      "US_DE": {
+        "physical": false,
+        "economic": false
+      },
+      "US_DC": {
+        "physical": false,
+        "economic": false
+      },
+      "US_FL": {
+        "physical": false,
+        "economic": true
+      },
+      "US_GA": {
+        "physical": false,
+        "economic": true
+      },
+      "US_HI": {
+        "physical": false,
+        "economic": false
+      },
+      "US_ID": {
+        "physical": false,
+        "economic": false
+      },
+      "US_IL": {
+        "physical": true,
+        "economic": true
+      },
+      "US_IN": {
+        "physical": false,
+        "economic": true
+      },
+      "US_IA": {
+        "physical": false,
+        "economic": false
+      },
+      "US_KS": {
+        "physical": false,
+        "economic": false
+      },
+      "US_KY": {
+        "physical": false,
+        "economic": false
+      },
+      "US_LA": {
+        "physical": false,
+        "economic": false
+      },
+      "US_ME": {
+        "physical": false,
+        "economic": false
+      },
+      "US_MD": {
+        "physical": false,
+        "economic": true
+      },
+      "US_MA": {
+        "physical": true,
+        "economic": true
+      },
+      "US_MI": {
+        "physical": false,
+        "economic": false
+      },
+      "US_MN": {
+        "physical": false,
+        "economic": true
+      },
+      "US_MS": {
+        "physical": false,
+        "economic": false
+      },
+      "US_MO": {
+        "physical": false,
+        "economic": true
+      },
+      "US_MT": {
+        "physical": false,
+        "economic": false
+      },
+      "US_NE": {
+        "physical": false,
+        "economic": false
+      },
+      "US_NV": {
+        "physical": false,
+        "economic": false
+      },
+      "US_NH": {
+        "physical": false,
+        "economic": false
+      },
+      "US_NJ": {
+        "physical": false,
+        "economic": true
+      },
+      "US_NM": {
+        "physical": false,
+        "economic": false
+      },
+      "US_NY": {
+        "physical": true,
+        "economic": true
+      },
+      "US_NC": {
+        "physical": false,
+        "economic": true
+      },
+      "US_ND": {
+        "physical": false,
+        "economic": false
+      },
+      "US_OH": {
+        "physical": false,
+        "economic": true
+      },
+      "US_OK": {
+        "physical": false,
+        "economic": false
+      },
+      "US_OR": {
+        "physical": false,
+        "economic": true
+      },
+      "US_PA": {
+        "physical": false,
+        "economic": true
+      },
+      "US_RI": {
+        "physical": false,
+        "economic": false
+      },
+      "US_SC": {
+        "physical": false,
+        "economic": true
+      },
+      "US_SD": {
+        "physical": false,
+        "economic": false
+      },
+      "US_TN": {
+        "physical": false,
+        "economic": true
+      },
+      "US_TX": {
+        "physical": true,
+        "economic": true
+      },
+      "US_UT": {
+        "physical": false,
+        "economic": false
+      },
+      "US_VT": {
+        "physical": false,
+        "economic": false
+      },
+      "US_VA": {
+        "physical": false,
+        "economic": true
+      },
+      "US_WA": {
+        "physical": true,
+        "economic": true
+      },
+      "US_WV": {
+        "physical": false,
+        "economic": false
+      },
+      "US_WI": {
+        "physical": false,
+        "economic": false
+      },
+      "US_WY": {
+        "physical": false,
+        "economic": false
+      },
+      "US_VI": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "GB": {
+    "states": {
+      "GB_ENG": {
+        "physical": true,
+        "economic": true
+      },
+      "GB_NIR": {
+        "physical": false,
+        "economic": true
+      },
+      "GB_SCT": {
+        "physical": true,
+        "economic": true
+      },
+      "GB_WLS": {
+        "physical": false,
+        "economic": true
+      }
+    }
+  },
+  "DE": {
+    "states": {
+      "DE_BW": {
+        "physical": false,
+        "economic": true
+      },
+      "DE_BY": {
+        "physical": true,
+        "economic": true
+      },
+      "DE_BE": {
+        "physical": true,
+        "economic": true
+      },
+      "DE_BB": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_HB": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_HH": {
+        "physical": false,
+        "economic": true
+      },
+      "DE_HE": {
+        "physical": true,
+        "economic": true
+      },
+      "DE_MV": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_NI": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_NW": {
+        "physical": false,
+        "economic": true
+      },
+      "DE_RP": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_SL": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_SN": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_ST": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_SH": {
+        "physical": false,
+        "economic": false
+      },
+      "DE_TH": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "FR": {
+    "states": {
+      "FR_CP": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_NC": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_ARA": {
+        "physical": true,
+        "economic": true
+      },
+      "FR_BFC": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_BRE": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_CVL": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_20R": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_GES": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_HDF": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_IDF": {
+        "physical": true,
+        "economic": true
+      },
+      "FR_NOR": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_NAQ": {
+        "physical": false,
+        "economic": true
+      },
+      "FR_OCC": {
+        "physical": false,
+        "economic": true
+      },
+      "FR_PDL": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_PAC": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_973": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_PF": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_TF": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_971": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_972": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_976": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_974": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_BL": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_MF": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_PM": {
+        "physical": false,
+        "economic": false
+      },
+      "FR_WF": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "IN": {
+    "states": {
+      "IN_AN": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_AP": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_AR": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_AS": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_BR": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_CH": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_CT": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_DH": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_DD": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_DL": {
+        "physical": true,
+        "economic": true
+      },
+      "IN_GA": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_GJ": {
+        "physical": false,
+        "economic": true
+      },
+      "IN_HR": {
+        "physical": false,
+        "economic": true
+      },
+      "IN_HP": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_JK": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_JH": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_KA": {
+        "physical": true,
+        "economic": true
+      },
+      "IN_KL": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_LA": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_LD": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_MP": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_MH": {
+        "physical": true,
+        "economic": true
+      },
+      "IN_MN": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_ML": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_MZ": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_NL": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_OR": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_PY": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_PB": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_RJ": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_SK": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_TN": {
+        "physical": false,
+        "economic": true
+      },
+      "IN_TG": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_TR": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_UP": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_UT": {
+        "physical": false,
+        "economic": false
+      },
+      "IN_WB": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "JP": {
+    "states": {
+      "JP_23": {
+        "physical": true,
+        "economic": true
+      },
+      "JP_05": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_02": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_38": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_21": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_10": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_34": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_01": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_18": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_40": {
+        "physical": false,
+        "economic": true
+      },
+      "JP_07": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_28": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_08": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_17": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_03": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_37": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_46": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_14": {
+        "physical": false,
+        "economic": true
+      },
+      "JP_39": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_43": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_26": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_24": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_04": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_45": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_20": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_42": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_29": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_15": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_44": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_33": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_47": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_27": {
+        "physical": true,
+        "economic": true
+      },
+      "JP_41": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_11": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_25": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_32": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_22": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_12": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_36": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_13": {
+        "physical": true,
+        "economic": true
+      },
+      "JP_09": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_31": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_16": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_30": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_06": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_35": {
+        "physical": false,
+        "economic": false
+      },
+      "JP_19": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "CA": {
+    "states": {
+      "CA_AB": {
+        "physical": false,
+        "economic": true
+      },
+      "CA_BC": {
+        "physical": true,
+        "economic": true
+      },
+      "CA_MB": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NB": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NL": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NT": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NS": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NULL": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_NU": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_ON": {
+        "physical": true,
+        "economic": true
+      },
+      "CA_PE": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_QC": {
+        "physical": true,
+        "economic": true
+      },
+      "CA_qc": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_SK": {
+        "physical": false,
+        "economic": false
+      },
+      "CA_YT": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "AU": {
+    "states": {
+      "AU_ACT": {
+        "physical": false,
+        "economic": false
+      },
+      "AU_NSW": {
+        "physical": true,
+        "economic": true
+      },
+      "AU_NT": {
+        "physical": false,
+        "economic": false
+      },
+      "AU_QLD": {
+        "physical": false,
+        "economic": true
+      },
+      "AU_SA": {
+        "physical": false,
+        "economic": true
+      },
+      "AU_TAS": {
+        "physical": false,
+        "economic": false
+      },
+      "AU_VIC": {
+        "physical": true,
+        "economic": true
+      },
+      "AU_WA": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "BR": {
+    "states": {
+      "BR_AC": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_AL": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_AP": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_AM": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_BA": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_CE": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_DF": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_ES": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_GO": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_MA": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_MT": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_MS": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_MG": {
+        "physical": false,
+        "economic": true
+      },
+      "BR_PA": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_PB": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_PR": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_PE": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_PI": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_RJ": {
+        "physical": true,
+        "economic": true
+      },
+      "BR_RN": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_RS": {
+        "physical": false,
+        "economic": true
+      },
+      "BR_RO": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_RR": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_SC": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_SP": {
+        "physical": true,
+        "economic": true
+      },
+      "BR_SE": {
+        "physical": false,
+        "economic": false
+      },
+      "BR_TO": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "SG": {
+    "states": {
+      "SG_01": {
+        "physical": true,
+        "economic": true
+      },
+      "SG_02": {
+        "physical": false,
+        "economic": true
+      },
+      "SG_03": {
+        "physical": true,
+        "economic": true
+      },
+      "SG_04": {
+        "physical": false,
+        "economic": true
+      },
+      "SG_05": {
+        "physical": false,
+        "economic": true
+      }
+    }
+  },
+  "IE": {
+    "states": {
+      "IE_C": {
+        "physical": false,
+        "economic": false
+      },
+      "IE_L": {
+        "physical": true,
+        "economic": true
+      },
+      "IE_M": {
+        "physical": false,
+        "economic": true
+      },
+      "IE_U": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "NL": {
+    "states": {
+      "NL_BQ1": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_NULL": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_DR": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_FL": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_FR": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_GE": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_GR": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_LI": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_NB": {
+        "physical": false,
+        "economic": true
+      },
+      "NL_NH": {
+        "physical": true,
+        "economic": true
+      },
+      "NL_OV": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_UT": {
+        "physical": false,
+        "economic": true
+      },
+      "NL_ZE": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_ZH": {
+        "physical": true,
+        "economic": true
+      },
+      "NL_BQ2": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_BQ3": {
+        "physical": false,
+        "economic": false
+      },
+      "NL_SX": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "CH": {
+    "states": {
+      "CH_AG": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_AR": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_AI": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_BL": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_BS": {
+        "physical": false,
+        "economic": true
+      },
+      "CH_BE": {
+        "physical": false,
+        "economic": true
+      },
+      "CH_FR": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_GE": {
+        "physical": true,
+        "economic": true
+      },
+      "CH_GL": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_GR": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_JU": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_LU": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_NE": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_NW": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_OW": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_SG": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_SH": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_SZ": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_SO": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_TG": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_TI": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_UR": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_VD": {
+        "physical": true,
+        "economic": true
+      },
+      "CH_VS": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_ZG": {
+        "physical": false,
+        "economic": false
+      },
+      "CH_ZH": {
+        "physical": true,
+        "economic": true
+      }
+    }
+  },
+  "KR": {
+    "states": {
+      "KR_26": {
+        "physical": false,
+        "economic": true
+      },
+      "KR_43": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_44": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_27": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_30": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_42": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_29": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_41": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_47": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_48": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_28": {
+        "physical": false,
+        "economic": true
+      },
+      "KR_49": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_45": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_46": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_50": {
+        "physical": false,
+        "economic": false
+      },
+      "KR_11": {
+        "physical": true,
+        "economic": true
+      },
+      "KR_31": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "MX": {
+    "states": {
+      "MX_AGU": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_BCN": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_BCS": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_CAM": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_CHP": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_CHH": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_CMX": {
+        "physical": true,
+        "economic": true
+      },
+      "MX_COA": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_COL": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_DUR": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_GUA": {
+        "physical": false,
+        "economic": true
+      },
+      "MX_GRO": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_HID": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_JAL": {
+        "physical": true,
+        "economic": true
+      },
+      "MX_MEX": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_MIC": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_MOR": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_NAY": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_NLE": {
+        "physical": false,
+        "economic": true
+      },
+      "MX_OAX": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_PUE": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_QUE": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_ROO": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_SLP": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_SIN": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_SON": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_TAB": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_TAM": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_TLA": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_VER": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_YUC": {
+        "physical": false,
+        "economic": false
+      },
+      "MX_ZAC": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "IT": {
+    "states": {
+      "IT_65": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_77": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_78": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_72": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_45": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_36": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_62": {
+        "physical": true,
+        "economic": true
+      },
+      "IT_42": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_25": {
+        "physical": true,
+        "economic": true
+      },
+      "IT_57": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_67": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_21": {
+        "physical": false,
+        "economic": true
+      },
+      "IT_75": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_88": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_82": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_52": {
+        "physical": false,
+        "economic": true
+      },
+      "IT_32": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_55": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_23": {
+        "physical": false,
+        "economic": false
+      },
+      "IT_34": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "ES": {
+    "states": {
+      "ES_CN": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_AN": {
+        "physical": false,
+        "economic": true
+      },
+      "ES_AR": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_AS": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_CB": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_CM": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_CL": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_CT": {
+        "physical": true,
+        "economic": true
+      },
+      "ES_CE": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_EX": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_GA": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_IB": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_NULL": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_RI": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_MD": {
+        "physical": true,
+        "economic": true
+      },
+      "ES_ML": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_MC": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_NC": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_BI": {
+        "physical": false,
+        "economic": false
+      },
+      "ES_VC": {
+        "physical": false,
+        "economic": false
+      }
+    }
+  },
+  "SE": {
+    "states": {
+      "SE_K": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_W": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_X": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_I": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_N": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_Z": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_F": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_H": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_G": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_BD": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_T": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_E": {
+        "physical": false,
+        "economic": true
+      },
+      "SE_M": {
+        "physical": false,
+        "economic": true
+      },
+      "SE_D": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_AB": {
+        "physical": true,
+        "economic": true
+      },
+      "SE_C": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_S": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_AC": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_Y": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_U": {
+        "physical": false,
+        "economic": false
+      },
+      "SE_O": {
+        "physical": true,
+        "economic": true
+      }
+    }
+  }
 }
