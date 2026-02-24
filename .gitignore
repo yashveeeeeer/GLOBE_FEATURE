@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Editor
+.vscode/
+.cursor/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Vite
+*.local
+
+# Generated theme tokens (from npm run theme:sync)
+src/theme/tokens.generated.json
+
+# Raw source TopoJSON (large; processed output lives in public/data/)
+*.topojson

@@ -1,0 +1,65 @@
+/**
+ * ── Commenda Theme CSS ─────────────────────────────────────────────────
+ *
+ * Fallback variable definitions. Runtime injection (injectTokens.ts)
+ * overrides these, but this file ensures CSS vars exist even before
+ * JS boots, preventing FOUC.
+ */
+
+:root {
+  /* ── Backgrounds ───────────────────────────────────────── */
+  --bg: #0B0F1A;
+  --surface-1: #111827;
+  --surface-2: #1E2536;
+  --surface-hover: #263044;
+
+  /* ── Text ──────────────────────────────────────────────── */
+  --text-1: #F1F5F9;
+  --text-2: #CBD5E1;
+  --muted: #64748B;
+
+  /* ── Borders & Rings ───────────────────────────────────── */
+  --border: #1E293B;
+  --ring: #3B82F6;
+
+  /* ── Accent ────────────────────────────────────────────── */
+  --accent: #3B82F6;
+  --accent-hover: #2563EB;
+  --accent-contrast: #FFFFFF;
+
+  /* ── Semantic ──────────────────────────────────────────── */
+  --danger: #EF4444;
+  --warning: #F59E0B;
+  --success: #10B981;
+
+  /* ── Shadow ────────────────────────────────────────────── */
+  --shadow-color: 220 40% 2%;
+
+  /* ── Typography ────────────────────────────────────────── */
+  --font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', 'Segoe UI', system-ui, sans-serif;
+
+  /* ── Radii ─────────────────────────────────────────────── */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+
+  /* ── Layout ────────────────────────────────────────────── */
+  --sidebar-width: 35%;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────── */
+.theme-light {
+  --bg: #FFFFFF;
+  --surface-1: #F8FAFC;
+  --surface-2: #F1F5F9;
+  --surface-hover: #E2E8F0;
+  --text-1: #0F172A;
+  --text-2: #334155;
+  --muted: #64748B;
+  --border: #E2E8F0;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-contrast: #FFFFFF;
+  --shadow-color: 220 10% 50%;
+}
