@@ -14,8 +14,6 @@ import {
   GeoJsonDataSource,
   Color,
   ColorMaterialProperty,
-  ConstantProperty,
-  ArcType,
   type Entity,
 } from "cesium";
 import type {
@@ -240,20 +238,12 @@ export class LayerManager {
     },
   ): Promise<GeoJsonDataSource | null> {
     try {
-      const ds = await GeoJsonDataSource.load(geo as never, {
+      return await GeoJsonDataSource.load(geo as never, {
         stroke: opts.stroke,
         strokeWidth: opts.strokeWidth,
         fill: opts.fill,
         clampToGround: false,
       });
-
-      for (const entity of ds.entities.values) {
-        if (entity.polygon) {
-          entity.polygon.arcType = new ConstantProperty(ArcType.RHUMB);
-        }
-      }
-
-      return ds;
     } catch (err) {
       console.error("[LayerManager] GeoJSON load error:", err);
       return null;
