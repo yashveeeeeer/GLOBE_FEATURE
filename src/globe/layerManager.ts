@@ -180,7 +180,6 @@ export class LayerManager {
     for (const entity of this.countriesLayer.entities.values) {
       const id = entity.id;
       if (!id || !entity.polygon) continue;
-      if (id === "AQ") continue;
       const breached = isCountryBreached(
         id, this.countryIndex, this.stateNexus, this.filters,
       );
