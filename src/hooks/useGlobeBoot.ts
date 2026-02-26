@@ -109,5 +109,5 @@ export function useGlobeBoot({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { dataVersion, globeReady, error, boot };
+  return { dataVersion, setDataVersion, globeReady, error, boot };
 }

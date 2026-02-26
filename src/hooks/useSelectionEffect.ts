@@ -13,7 +13,7 @@ import { useEffect, useState, type RefObject } from "react";
 import type { Viewer as CesiumViewer } from "cesium";
 
 import { useSelectionStore } from "../state/selectionStore";
-import { getRegionEntry } from "../data/regionIndex";
+import { getRegionEntry, ensureFullIndex } from "../data/regionIndex";
 import { loadDataset } from "../data/loader";
 import {
   alive,
@@ -31,6 +31,7 @@ interface UseSelectionEffectArgs {
   layersRef: RefObject<LayerManager | null>;
   countriesRef: RefObject<RegionFeatureCollection | null>;
   dataVersion: number;
+  setDataVersion: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export function useSelectionEffect({
@@ -38,6 +39,7 @@ export function useSelectionEffect({
   layersRef,
   countriesRef,
   dataVersion,
+  setDataVersion,
 }: UseSelectionEffectArgs) {
   const [subLoading, setSubLoading] = useState(false);
 
@@ -78,6 +80,10 @@ export function useSelectionEffect({
             focusToRegion(viewerRef.current, selectedCountryId, { mode: "bbox" });
           }
 
+          await ensureFullIndex();
+          if (ac.signal.aborted) return;
+          setDataVersion((v) => v + 1);
+
           const entry = getRegionEntry(selectedCountryId);
           if (entry?.childDatasetPath) {
             setSubLoading(true);
@@ -97,6 +103,9 @@ export function useSelectionEffect({
 
         if (selectionLevel === "subregion" && selectedSubregionId && selectedCountryId) {
           lm.hideSubregions();
+
+          await ensureFullIndex();
+          if (ac.signal.aborted) return;
 
           const entry = getRegionEntry(selectedCountryId);
           if (entry?.childDatasetPath) {

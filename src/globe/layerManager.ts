@@ -232,7 +232,7 @@ export class LayerManager {
         stroke: opts.stroke,
         strokeWidth: opts.strokeWidth,
         fill: opts.fill,
-        clampToGround: true,
+        clampToGround: false,
       });
     } catch (err) {
       console.error("[LayerManager] GeoJSON load error:", err);

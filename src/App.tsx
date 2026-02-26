@@ -35,7 +35,7 @@ export default function App() {
   const { mountRef, viewerRef, layersRef, countriesRef, ensureViewer } =
     useGlobeViewer();
 
-  const { dataVersion, globeReady, error, boot } = useGlobeBoot({
+  const { dataVersion, setDataVersion, globeReady, error, boot } = useGlobeBoot({
     viewerRef,
     layersRef,
     countriesRef,
@@ -47,6 +47,7 @@ export default function App() {
     layersRef,
     countriesRef,
     dataVersion,
+    setDataVersion,
   });
 
   useKeyboardReset(mountRef);

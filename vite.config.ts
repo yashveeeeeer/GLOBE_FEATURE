@@ -29,4 +29,13 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          cesium: ["cesium"],
+        },
+      },
+    },
+  },
 });
