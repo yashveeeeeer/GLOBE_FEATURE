@@ -6,6 +6,9 @@
  *
  * The viewer is intentionally minimal — UI chrome is stripped because the
  * app provides its own controls.
+ *
+ * Listens for "theme-change" custom events (dispatched by ThemeToggle)
+ * and swaps imagery + scene colours accordingly.
  */
 
 import {
@@ -18,6 +21,38 @@ import {
 import { setGlobeImagery } from "./imagery";
 import { isLightTheme } from "./globeTheme";
 
+/* ── Theme-dependent scene colours ────────────────────────────────────── */
+
+function applySceneTheme(scene: Scene, light: boolean): void {
+  if (light) {
+    scene.globe.baseColor = Color.fromCssColorString("#b8cde0");
+    scene.backgroundColor = Color.fromCssColorString("#d6e4f0");
+
+    if (scene.skyAtmosphere) {
+      scene.skyAtmosphere.brightnessShift = 0.0;
+      scene.skyAtmosphere.hueShift = 0.0;
+      scene.skyAtmosphere.saturationShift = 0.0;
+    }
+    scene.globe.atmosphereBrightnessShift = 0.05;
+    scene.globe.atmosphereSaturationShift = 0.0;
+    scene.fog.density = 1.5e-4;
+  } else {
+    scene.globe.baseColor = Color.fromCssColorString("#0f1729");
+    scene.backgroundColor = Color.fromCssColorString("#060a14");
+
+    if (scene.skyAtmosphere) {
+      scene.skyAtmosphere.brightnessShift = -0.15;
+      scene.skyAtmosphere.hueShift = -0.05;
+      scene.skyAtmosphere.saturationShift = 0.1;
+    }
+    scene.globe.atmosphereBrightnessShift = -0.1;
+    scene.globe.atmosphereSaturationShift = 0.15;
+    scene.fog.density = 2.0e-4;
+  }
+}
+
+/* ── Factory ──────────────────────────────────────────────────────────── */
+
 /**
  * Create a Cesium Viewer mounted into the given container element.
  *
@@ -25,21 +60,11 @@ import { isLightTheme } from "./globeTheme";
  * @returns The Viewer instance.
  */
 export function createViewer(container: HTMLElement | string): Viewer {
-  // Suppress the "missing Ion access token" warning.
-  // We don't use Ion services in this local-first setup.
   Ion.defaultAccessToken = undefined as unknown as string;
 
   const viewer = new Viewer(container, {
-    // ── Imagery ──────────────────────────────────────────────────
-    // Suppress default Bing imagery — use globe base color instead.
-    // This guarantees the globe renders offline with no external fetches.
     baseLayerPicker: false,
     baseLayer: false,
-
-    // ── Terrain ──────────────────────────────────────────────────
-    // Default is EllipsoidTerrainProvider (smooth ellipsoid, no terrain).
-
-    // ── Strip Cesium default UI chrome ───────────────────────────
     animation: false,
     timeline: false,
     fullscreenButton: false,
@@ -51,37 +76,25 @@ export function createViewer(container: HTMLElement | string): Viewer {
     selectionIndicator: false,
     navigationHelpButton: false,
     navigationInstructionsInitiallyVisible: false,
-    creditContainer: document.createElement("div"), // hide credits overlay
-
-    // ── Rendering ────────────────────────────────────────────────
-    requestRenderMode: false, // render continuously so rotation is smooth
-    // Don't show Cesium's built-in error panel (e.g. "connection failed" from
-    // resource load failures); the app shows its own ErrorBanner in the sidebar.
+    creditContainer: document.createElement("div"),
+    requestRenderMode: false,
     showRenderLoopErrors: false,
   });
 
   const scene: Scene = viewer.scene;
   scene.msaaSamples = 4;
-  scene.globe.baseColor = Color.fromCssColorString("#0f1729");
   scene.globe.showGroundAtmosphere = true;
   scene.globe.enableLighting = false;
-  scene.backgroundColor = Color.fromCssColorString("#060a14");
 
   if (scene.skyAtmosphere) {
     scene.skyAtmosphere.show = true;
-    scene.skyAtmosphere.brightnessShift = -0.15;
-    scene.skyAtmosphere.hueShift = -0.05;
-    scene.skyAtmosphere.saturationShift = 0.1;
   }
 
   scene.fog.enabled = true;
-  scene.fog.density = 2.0e-4;
-  scene.globe.atmosphereBrightnessShift = -0.1;
-  scene.globe.atmosphereSaturationShift = 0.15;
 
-  // Limit zoom range so the user can't zoom out past a reasonable distance
-  // or zoom in closer than ~500m. Prevents the globe becoming a tiny dot
-  // or the camera clipping into the surface.
+  const light = isLightTheme();
+  applySceneTheme(scene, light);
+
   const controller = scene.screenSpaceCameraController;
   controller.maximumZoomDistance = 18_000_000;
   controller.minimumZoomDistance = 500;
@@ -91,13 +104,28 @@ export function createViewer(container: HTMLElement | string): Viewer {
   controller.enableLook = true;
   controller.enableTranslate = true;
 
-  setGlobeImagery(viewer, isLightTheme());
+  setGlobeImagery(viewer, light);
 
-  // Set a comfortable initial camera position so the globe fills the pane
-  // nicely on widescreen PC monitors (~65 % of viewport).
   viewer.camera.setView({
     destination: Cartesian3.fromDegrees(0, 20, 15_000_000),
   });
+
+  /* ── React to theme changes at runtime ──────────────────────────── */
+
+  const onThemeChange = (e: Event) => {
+    if (viewer.isDestroyed()) return;
+    const isLight = (e as CustomEvent<{ isLight: boolean }>).detail.isLight;
+    applySceneTheme(viewer.scene, isLight);
+    setGlobeImagery(viewer, isLight);
+  };
+
+  document.addEventListener("theme-change", onThemeChange);
+
+  const originalDestroy = viewer.destroy.bind(viewer);
+  viewer.destroy = () => {
+    document.removeEventListener("theme-change", onThemeChange);
+    originalDestroy();
+  };
 
   return viewer;
 }
