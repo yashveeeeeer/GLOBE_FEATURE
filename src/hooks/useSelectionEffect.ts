@@ -77,28 +77,31 @@ export function useSelectionEffect({
           lm.hideCountries();
           lm.clearHighlight();
 
+          const bootEntry = getRegionEntry(selectedCountryId);
+          const childPath = bootEntry?.childDatasetPath;
+
           if (!ac.signal.aborted && alive(viewerRef.current)) {
             focusToRegion(viewerRef.current, selectedCountryId, { mode: "bbox" });
           }
 
-          await ensureFullIndex();
-          if (ac.signal.aborted) return;
-          setDataVersion((v) => v + 1);
+          const geoP = childPath ? loadDataset(childPath) : null;
+          const fullIndexP = ensureFullIndex();
 
-          const entry = getRegionEntry(selectedCountryId);
-          if (entry?.childDatasetPath) {
+          const [sub] = await Promise.all([geoP, fullIndexP]);
+          if (ac.signal.aborted) return;
+
+          if (sub && alive(viewerRef.current)) {
             setSubLoading(true);
             try {
-              const sub = await loadDataset(entry.childDatasetPath);
-              if (!ac.signal.aborted && alive(viewerRef.current)) {
-                lm.clearHighlight();
-                await lm.setSubregions(sub);
-                setFocusGeometry(sub);
-              }
+              lm.clearHighlight();
+              await lm.setSubregions(sub);
+              setFocusGeometry(sub);
             } finally {
               setSubLoading(false);
             }
           }
+
+          setDataVersion((v) => v + 1);
           return;
         }
 

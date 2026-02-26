@@ -13,6 +13,7 @@ import { useGlobeViewer } from "./hooks/useGlobeViewer";
 import { useGlobeBoot } from "./hooks/useGlobeBoot";
 import { useSelectionEffect } from "./hooks/useSelectionEffect";
 import { useKeyboardReset } from "./hooks/useKeyboardReset";
+import { useRenderHealth } from "./hooks/useRenderHealth";
 
 import { useNexusStore } from "./state/nexusStore";
 
@@ -51,6 +52,8 @@ export default function App() {
 
   useKeyboardReset(mountRef);
 
+  const { stalled, recover } = useRenderHealth(viewerRef, globeReady);
+
   const filters = useNexusStore((s) => s.filters);
 
   useEffect(() => {
@@ -76,6 +79,20 @@ export default function App() {
             <div className="app__globe-mount" ref={mountRef} />
             {globeReady && <NexusLegend />}
             {globeReady && <NexusTooltip viewerRef={viewerRef} />}
+            {stalled && (
+              <div className="globe-stalled">
+                <span className="globe-stalled__text">
+                  GLOBE RENDER STALLED
+                </span>
+                <button
+                  type="button"
+                  className="globe-stalled__btn"
+                  onClick={recover}
+                >
+                  RELOAD
+                </button>
+              </div>
+            )}
           </div>
         </GlobeErrorBoundary>
 

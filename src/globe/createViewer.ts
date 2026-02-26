@@ -60,7 +60,7 @@ export function createViewer(container: HTMLElement | string): Viewer {
     navigationInstructionsInitiallyVisible: false,
     creditContainer: document.createElement("div"),
     requestRenderMode: false,
-    showRenderLoopErrors: false,
+    showRenderLoopErrors: import.meta.env.DEV,
   });
 
   const scene: Scene = viewer.scene;

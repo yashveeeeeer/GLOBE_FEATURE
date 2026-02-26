@@ -13,7 +13,7 @@ import { parseTopoJson } from "./topo";
 
 /* ── Configuration ───────────────────────────────────────────────────── */
 
-const MAX_CACHE_ENTRIES = 20;
+const MAX_CACHE_ENTRIES = 50;
 
 /* ── LRU Cache ───────────────────────────────────────────────────────── */
 

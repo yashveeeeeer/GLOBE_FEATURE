@@ -8,8 +8,8 @@
 import { useState, useCallback, useEffect, type RefObject } from "react";
 import type { Viewer as CesiumViewer } from "cesium";
 
-import { loadRegionIndex } from "../data/regionIndex";
-import { loadDataset } from "../data/loader";
+import { loadRegionIndex, getRegionEntry } from "../data/regionIndex";
+import { loadDataset, prefetchDataset } from "../data/loader";
 import { validateNexusData } from "../data/schema";
 import {
   alive,
@@ -108,6 +108,16 @@ export function useGlobeBoot({
 
       enableAutoRotate(viewerRef.current);
       setGlobeReady(true);
+
+      if (nexusFile) {
+        const { countryIndex } = useNexusStore.getState();
+        for (const countryId of Object.keys(countryIndex)) {
+          const entry = getRegionEntry(countryId);
+          if (entry?.childDatasetPath) {
+            prefetchDataset(entry.childDatasetPath);
+          }
+        }
+      }
     } catch (err) {
       console.error("[boot] Boot failed:", err);
       const raw = err instanceof Error ? err.message : "Failed to load.";

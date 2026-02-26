@@ -50,8 +50,11 @@ function cancelPendingFade(): void {
 /**
  * Animate `layer.alpha` from `from` to `to` over `durationMs`, then call
  * `onDone`. Uses requestAnimationFrame for smooth 60fps interpolation.
+ * Accepts a `viewer` ref so it can bail out if the viewer is destroyed
+ * mid-animation (prevents silent render-loop crashes).
  */
 function fadeLayer(
+  viewer: Viewer,
   layer: ImageryLayer,
   from: number,
   to: number,
@@ -63,6 +66,10 @@ function fadeLayer(
   layer.alpha = from;
 
   const step = (now: number) => {
+    if (viewer.isDestroyed()) {
+      _fadeRaf = 0;
+      return;
+    }
     const t = Math.min((now - start) / durationMs, 1);
     const eased = t * t * (3 - 2 * t);
     layer.alpha = from + (to - from) * eased;
@@ -108,7 +115,7 @@ export async function setGlobeImagery(
     }
 
     newLayer.alpha = 0;
-    fadeLayer(newLayer, 0, 1, CROSSFADE_MS, () => {
+    fadeLayer(viewer, newLayer, 0, 1, CROSSFADE_MS, () => {
       if (viewer.isDestroyed()) return;
       while (layers.length > 1) {
         layers.remove(layers.get(0), true);

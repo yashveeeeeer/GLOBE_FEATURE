@@ -7,6 +7,7 @@
  *   - highlight   : overlay for selected region
  *
  * Maintains an entity index (regionId → Entity) for O(1) lookups.
+ * Stores source GeoJSON so layers can be rebuilt on theme change.
  */
 
 import {
@@ -14,7 +15,6 @@ import {
   GeoJsonDataSource,
   Color,
   ColorMaterialProperty,
-  ConstantProperty,
   type Entity,
 } from "cesium";
 import type {
@@ -51,6 +51,9 @@ export class LayerManager {
   private countryIndex: Record<string, string[]> = {};
   private filters: NexusFilters = { physical: true, economic: true };
 
+  private countriesGeo: RegionFeatureCollection | null = null;
+  private subregionsGeo: RegionFeatureCollection | null = null;
+
   constructor(viewer: Viewer) {
     this.viewer = viewer;
   }
@@ -59,6 +62,9 @@ export class LayerManager {
 
   async setCountries(geo: RegionFeatureCollection): Promise<void> {
     if (!alive(this.viewer)) return;
+    this.countriesGeo = geo;
+
+    const wasHidden = this.countriesLayer ? !this.countriesLayer.show : false;
     this.removeLayer(this.countriesLayer);
 
     const ds = await this.loadGeo(geo, {
@@ -69,6 +75,7 @@ export class LayerManager {
     if (!ds || !alive(this.viewer)) return;
 
     ds.name = "countries";
+    if (wasHidden) ds.show = false;
     this.viewer.dataSources.add(ds);
     this.countriesLayer = ds;
     this.rebuildIndex(ds);
@@ -78,6 +85,7 @@ export class LayerManager {
 
   async setSubregions(geo: RegionFeatureCollection): Promise<void> {
     if (!alive(this.viewer)) return;
+    this.subregionsGeo = geo;
     this.clearHighlight();
     this.clearSubregions();
 
@@ -104,6 +112,7 @@ export class LayerManager {
   clearSubregions(): void {
     this.removeLayer(this.subregionsLayer);
     this.subregionsLayer = null;
+    this.subregionsGeo = null;
   }
 
   /* ── Visibility toggles ───────────────────────────────────────────── */
@@ -175,19 +184,56 @@ export class LayerManager {
     this.recolorSubregions();
   }
 
-  recolorOutlines(isLight?: boolean): void {
+  /**
+   * Rebuild country and subregion layers with the correct outline color
+   * for the given theme. Rebuilding the GeoJsonDataSource from source
+   * GeoJSON is the only reliable way to change polyline stroke color in
+   * CesiumJS — patching entity properties doesn't trigger re-render.
+   */
+  async recolorOutlines(isLight?: boolean): Promise<void> {
+    if (!alive(this.viewer)) return;
     const light = isLight ?? isLightTheme();
-    const outlineColor = getRegionOutlineColor(light);
+    const strokeColor = getRegionOutlineColor(light);
 
-    for (const layer of [this.countriesLayer, this.subregionsLayer]) {
-      if (!layer) continue;
-      for (const entity of layer.entities.values) {
-        if (entity.polygon) {
-          entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
-        }
-        if (entity.polyline) {
-          entity.polyline.material = new ColorMaterialProperty(outlineColor);
-        }
+    if (this.countriesGeo) {
+      const wasHidden = this.countriesLayer ? !this.countriesLayer.show : false;
+      this.removeLayer(this.countriesLayer);
+      this.countriesLayer = null;
+
+      const ds = await this.loadGeo(this.countriesGeo, {
+        stroke: strokeColor,
+        strokeWidth: REGION_OUTLINE_WIDTH,
+        fill: Color.TRANSPARENT,
+      });
+      if (ds && alive(this.viewer)) {
+        ds.name = "countries";
+        if (wasHidden) ds.show = false;
+        this.viewer.dataSources.add(ds);
+        this.countriesLayer = ds;
+        this.rebuildIndex(ds);
+        this.recolorCountries();
+      }
+    }
+
+    if (this.subregionsGeo && alive(this.viewer)) {
+      const wasHidden = this.subregionsLayer
+        ? !this.subregionsLayer.show
+        : false;
+      this.removeLayer(this.subregionsLayer);
+      this.subregionsLayer = null;
+
+      const ds = await this.loadGeo(this.subregionsGeo, {
+        stroke: strokeColor,
+        strokeWidth: REGION_OUTLINE_WIDTH,
+        fill: Color.TRANSPARENT,
+      });
+      if (ds && alive(this.viewer)) {
+        ds.name = "subregions";
+        if (wasHidden) ds.show = false;
+        this.viewer.dataSources.add(ds);
+        this.subregionsLayer = ds;
+        this.rebuildIndex(ds);
+        this.recolorSubregions();
       }
     }
   }
@@ -232,6 +278,7 @@ export class LayerManager {
     this.clearSubregions();
     this.removeLayer(this.countriesLayer);
     this.countriesLayer = null;
+    this.countriesGeo = null;
     this.entityIndex.clear();
   }
 
@@ -265,8 +312,6 @@ export class LayerManager {
   }
 
   private rebuildIndex(_ds: GeoJsonDataSource): void {
-    // Clear existing entries for this data source
-    // (simple approach: rebuild the whole index from all active sources)
     this.entityIndex.clear();
     for (const source of [
       this.countriesLayer,

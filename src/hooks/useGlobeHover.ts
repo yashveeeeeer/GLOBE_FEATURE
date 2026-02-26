@@ -42,6 +42,8 @@ export function useGlobeHover(
   const pendingHoverRef = useRef<HoverInfo | null>(null);
 
   useEffect(() => {
+    let aborted = false;
+
     const check = () => {
       const viewer = viewerRef.current;
       if (!viewer || viewer.isDestroyed() || !viewer.canvas) return false;
@@ -50,12 +52,13 @@ export function useGlobeHover(
 
     if (!check()) {
       const interval = setInterval(() => {
+        if (aborted) { clearInterval(interval); return; }
         if (check()) {
           clearInterval(interval);
           attach();
         }
       }, 500);
-      return () => clearInterval(interval);
+      return () => { aborted = true; clearInterval(interval); };
     }
 
     attach();
@@ -137,6 +140,7 @@ export function useGlobeHover(
     }
 
     return () => {
+      aborted = true;
       cancelAnimationFrame(rafRef.current);
       restorePrevious();
       if (handlerRef.current) {

@@ -128,7 +128,10 @@ export const useSelectionStore = create<SelectionStore>()((set, get) => ({
   },
 }));
 
-if (typeof window !== "undefined") {
+let _hashListenerAttached = false;
+
+if (typeof window !== "undefined" && !_hashListenerAttached) {
+  _hashListenerAttached = true;
   window.addEventListener("hashchange", () => {
     const fromHash = hashToState();
     const current = useSelectionStore.getState();
