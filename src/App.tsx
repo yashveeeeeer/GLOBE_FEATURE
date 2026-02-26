@@ -22,6 +22,7 @@ import { ThemeToggle } from "./ui/ThemeToggle";
 import { NexusLegend } from "./ui/NexusLegend";
 import { FilterPanel } from "./ui/FilterPanel";
 import { NexusTooltip } from "./ui/NexusTooltip";
+import { GlobeErrorBoundary } from "./ui/GlobeErrorBoundary";
 
 import "./App.css";
 
@@ -57,19 +58,36 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="app__globe">
-        <div className="app__globe-mount" ref={mountRef} />
-        {globeReady && <NexusLegend />}
-        {globeReady && <NexusTooltip viewerRef={viewerRef} />}
-        {!globeReady && (
-          <div className="app__loading"><p>Loading globe…</p></div>
-        )}
-      </div>
+      <GlobeErrorBoundary>
+        <div className="app__globe">
+          <div className="app__globe-mount" ref={mountRef} />
+          {globeReady && <NexusLegend />}
+          {globeReady && <NexusTooltip viewerRef={viewerRef} />}
+          {!globeReady && (
+            <div className="app__loading">
+              <div className="app__loading-globe" />
+              <span className="app__loading-text">Loading globe…</span>
+            </div>
+          )}
+        </div>
+      </GlobeErrorBoundary>
 
       <aside className="app__sidebar">
         <header className="app__sidebar-header">
           <div className="app__sidebar-header-row">
-            <h1 className="app__title">Globe Drilldown</h1>
+            <div className="app__brand">
+              <div className="app__logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
+              <div className="app__brand-text">
+                <h1 className="app__title">Commenda</h1>
+                <span className="app__subtitle">Nexus Exposure Map</span>
+              </div>
+            </div>
             <ThemeToggle />
           </div>
           <Breadcrumb />

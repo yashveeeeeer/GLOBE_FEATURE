@@ -123,13 +123,19 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
   return (
     <div className="region-table">
       <div className="region-table__search">
-        <input
-          type="text"
-          placeholder="Search…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="region-table__search-input"
-        />
+        <div className="region-table__search-wrap">
+          <svg className="region-table__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search regions…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="region-table__search-input"
+          />
+        </div>
       </div>
 
       <div className="region-table__toolbar">
@@ -146,7 +152,16 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
 
       <div className="region-table__body">
         {rows.length === 0 ? (
-          <div className="region-table__empty">{emptyMessage}</div>
+          <div className="region-table__empty">
+            <div className="region-table__empty-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+            </div>
+            {emptyMessage}
+          </div>
         ) : (
           <List
             rowCount={rows.length}

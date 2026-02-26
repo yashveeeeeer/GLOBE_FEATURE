@@ -59,14 +59,24 @@ export function createViewer(container: HTMLElement | string): Viewer {
     showRenderLoopErrors: false,
   });
 
-  // Set globe base colour (dark ocean blue) and configure rendering
   const scene: Scene = viewer.scene;
-  scene.msaaSamples = 1;
-  scene.globe.baseColor = Color.fromCssColorString("#1a1d2e");
+  scene.msaaSamples = 4;
+  scene.globe.baseColor = Color.fromCssColorString("#0f1729");
   scene.globe.showGroundAtmosphere = true;
   scene.globe.enableLighting = false;
-  if (scene.skyAtmosphere) scene.skyAtmosphere.show = true;
-  scene.backgroundColor = Color.fromCssColorString("#0b0e17");
+  scene.backgroundColor = Color.fromCssColorString("#060a14");
+
+  if (scene.skyAtmosphere) {
+    scene.skyAtmosphere.show = true;
+    scene.skyAtmosphere.brightnessShift = -0.15;
+    scene.skyAtmosphere.hueShift = -0.05;
+    scene.skyAtmosphere.saturationShift = 0.1;
+  }
+
+  scene.fog.enabled = true;
+  scene.fog.density = 2.0e-4;
+  scene.globe.atmosphereBrightnessShift = -0.1;
+  scene.globe.atmosphereSaturationShift = 0.15;
 
   // Limit zoom range so the user can't zoom out past a reasonable distance
   // or zoom in closer than ~500m. Prevents the globe becoming a tiny dot

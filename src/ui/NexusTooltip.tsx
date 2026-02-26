@@ -31,13 +31,24 @@ export const NexusTooltip = memo(function NexusTooltip({ viewerRef }: NexusToolt
 
   if (!entry && !regionEntry) return null;
 
+  const tooltipW = 190;
+  const tooltipH = 90;
+  const pad = 16;
+  const rawX = hover.screenX + pad;
+  const rawY = hover.screenY - 10;
+
+  const globeEl = document.querySelector(".app__globe");
+  const bounds = globeEl?.getBoundingClientRect();
+  const maxX = bounds ? bounds.width - tooltipW - 8 : window.innerWidth - tooltipW - 8;
+  const maxY = bounds ? bounds.height - tooltipH - 8 : window.innerHeight - tooltipH - 8;
+
+  const clampedX = rawX > maxX ? hover.screenX - tooltipW - pad : rawX;
+  const clampedY = Math.max(8, Math.min(rawY, maxY));
+
   return (
     <div
       className="nexus-tooltip"
-      style={{
-        left: hover.screenX + 14,
-        top: hover.screenY - 10,
-      }}
+      style={{ left: clampedX, top: clampedY }}
     >
       <div className="nexus-tooltip__name">{name}</div>
       {entry ? (
@@ -48,7 +59,7 @@ export const NexusTooltip = memo(function NexusTooltip({ viewerRef }: NexusToolt
               style={{ background: NEXUS_PHYSICAL_FILL }}
             />
             <span>Physical</span>
-            <span className={`nexus-tooltip__val ${entry.physical ? "nexus-tooltip__val--yes" : ""}`}>
+            <span className={`nexus-tooltip__val ${entry.physical ? "nexus-tooltip__val--yes" : "nexus-tooltip__val--no"}`}>
               {entry.physical ? "Yes" : "No"}
             </span>
           </div>
@@ -58,7 +69,7 @@ export const NexusTooltip = memo(function NexusTooltip({ viewerRef }: NexusToolt
               style={{ background: NEXUS_ECONOMIC_FILL }}
             />
             <span>Economic</span>
-            <span className={`nexus-tooltip__val ${entry.economic ? "nexus-tooltip__val--yes" : ""}`}>
+            <span className={`nexus-tooltip__val ${entry.economic ? "nexus-tooltip__val--yes" : "nexus-tooltip__val--no"}`}>
               {entry.economic ? "Yes" : "No"}
             </span>
           </div>

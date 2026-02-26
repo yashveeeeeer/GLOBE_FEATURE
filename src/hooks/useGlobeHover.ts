@@ -10,9 +10,12 @@ import { useEffect, useState, useRef, type RefObject } from "react";
 import {
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
+  ColorMaterialProperty,
+  Color,
   defined,
   type Viewer as CesiumViewer,
   type Cartesian2,
+  type Entity,
 } from "cesium";
 
 export interface HoverInfo {
@@ -21,11 +24,15 @@ export interface HoverInfo {
   screenY: number;
 }
 
+const HOVER_ALPHA_BOOST = 0.18;
+
 export function useGlobeHover(
   viewerRef: RefObject<CesiumViewer | null>,
 ) {
   const [hover, setHover] = useState<HoverInfo | null>(null);
   const handlerRef = useRef<ScreenSpaceEventHandler | null>(null);
+  const prevEntityRef = useRef<Entity | null>(null);
+  const prevMaterialRef = useRef<ColorMaterialProperty | null>(null);
 
   useEffect(() => {
     const check = () => {
@@ -46,6 +53,15 @@ export function useGlobeHover(
 
     attach();
 
+    function restorePrevious() {
+      const prev = prevEntityRef.current;
+      if (prev?.polygon && prevMaterialRef.current) {
+        prev.polygon.material = prevMaterialRef.current;
+      }
+      prevEntityRef.current = null;
+      prevMaterialRef.current = null;
+    }
+
     function attach() {
       const viewer = viewerRef.current;
       if (!viewer || viewer.isDestroyed()) return;
@@ -62,18 +78,43 @@ export function useGlobeHover(
 
         const picked = viewer.scene.pick(movement.endPosition);
         if (defined(picked) && picked.id?.id) {
+          const entity = picked.id as Entity;
+
+          if (entity !== prevEntityRef.current) {
+            restorePrevious();
+
+            if (entity.polygon) {
+              const currentMat = entity.polygon.material;
+              if (currentMat instanceof ColorMaterialProperty) {
+                prevEntityRef.current = entity;
+                prevMaterialRef.current = currentMat;
+                const currentColor = currentMat.color?.getValue(viewer.clock.currentTime);
+                if (currentColor) {
+                  const boosted = currentColor.withAlpha(
+                    Math.min(1, currentColor.alpha + HOVER_ALPHA_BOOST),
+                  );
+                  entity.polygon.material = new ColorMaterialProperty(
+                    Color.fromAlpha(boosted, boosted.alpha),
+                  );
+                }
+              }
+            }
+          }
+
           setHover({
-            entityId: picked.id.id,
+            entityId: entity.id,
             screenX: movement.endPosition.x,
             screenY: movement.endPosition.y,
           });
         } else {
+          restorePrevious();
           setHover(null);
         }
       }, ScreenSpaceEventType.MOUSE_MOVE);
     }
 
     return () => {
+      restorePrevious();
       if (handlerRef.current) {
         handlerRef.current.destroy();
         handlerRef.current = null;

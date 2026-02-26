@@ -44,7 +44,7 @@ export const NexusLegend = memo(function NexusLegend() {
         <div key={item.label} className="nexus-legend__item">
           <span
             className="nexus-legend__swatch"
-            style={{ background: item.color }}
+            style={{ background: item.color, "--swatch-color": item.color } as React.CSSProperties}
           />
           <span className="nexus-legend__label">{item.label}</span>
         </div>
