@@ -18,22 +18,29 @@ export function useRenderHealth(
 ) {
   const [stalled, setStalled] = useState(false);
   const stalledRef = useRef(false);
+  const renderTickRef = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
 
-    let lastFrame = -1;
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    const onPostRender = () => {
+      renderTickRef.current += 1;
+    };
+    viewer.scene.postRender.addEventListener(onPostRender);
+
+    let lastTick = renderTickRef.current;
     let missCount = 0;
 
     const id = setInterval(() => {
-      const viewer = viewerRef.current;
-      if (!viewer || viewer.isDestroyed()) return;
+      const liveViewer = viewerRef.current;
+      if (!liveViewer || liveViewer.isDestroyed()) return;
+      if (document.visibilityState !== "visible") return;
 
-      const scene = viewer.scene as unknown as Record<string, unknown>;
-      const fs = scene.frameState as { frameNumber?: number } | undefined;
-      const currentFrame = fs?.frameNumber ?? -1;
-
-      if (currentFrame === lastFrame) {
+      const currentTick = renderTickRef.current;
+      if (currentTick === lastTick) {
         missCount++;
         if (missCount >= 2 && !stalledRef.current) {
           stalledRef.current = true;
@@ -47,10 +54,13 @@ export function useRenderHealth(
         }
       }
 
-      lastFrame = currentFrame;
+      lastTick = currentTick;
     }, CHECK_INTERVAL_MS);
 
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      viewer.scene.postRender.removeEventListener(onPostRender);
+    };
   }, [viewerRef, enabled]);
 
   const recover = () => {
