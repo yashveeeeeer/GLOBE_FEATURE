@@ -12,7 +12,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "data:build": "node scripts/build-data.mjs",
+    "data:build": "node scripts/build-data.mjs && node scripts/optimizeData.mjs",
+    "data:optimize": "node scripts/optimizeData.mjs",
     "theme:sync": "npx tsx scripts/sync-commenda-theme.ts"
   },
   "dependencies": {

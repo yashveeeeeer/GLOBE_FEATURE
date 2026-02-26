@@ -143,7 +143,7 @@ async function parseOnMainThread(
  * free for camera animation. Falls back to main-thread parsing if the
  * Worker is unavailable.
  *
- * Results are LRU-cached (max 20 entries).
+ * Results are LRU-cached (max 50 entries).
  */
 export async function loadDataset(
   path: string,

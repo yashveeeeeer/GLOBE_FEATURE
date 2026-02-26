@@ -25,3 +25,6 @@ src/theme/tokens.generated.json
 
 # Raw source TopoJSON (large; processed output lives in public/data/)
 *.topojson
+
+# Build output from data:build (countries.topo.json is served; GeoJSON is fallback)
+public/data/countries.geo.json
