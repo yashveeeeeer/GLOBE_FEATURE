@@ -24,9 +24,11 @@ export const RegionIndexSchema = z.record(z.string(), RegionIndexEntrySchema);
 
 /**
  * Validate a parsed region index object.
- * Returns the validated data or throws with details.
+ * Skipped in production builds for faster boot.
  */
 export function validateRegionIndex(data: unknown) {
+  if (import.meta.env.PROD) return data as z.infer<typeof RegionIndexSchema>;
+
   const result = RegionIndexSchema.safeParse(data);
   if (!result.success) {
     console.warn(
@@ -52,6 +54,8 @@ export const NexusCountryDataSchema = z.object({
 export const NexusDataFileSchema = z.record(z.string(), NexusCountryDataSchema);
 
 export function validateNexusData(data: unknown) {
+  if (import.meta.env.PROD) return data as z.infer<typeof NexusDataFileSchema>;
+
   const result = NexusDataFileSchema.safeParse(data);
   if (!result.success) {
     console.warn(

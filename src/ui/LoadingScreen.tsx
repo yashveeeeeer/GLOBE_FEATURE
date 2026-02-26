@@ -1,7 +1,6 @@
 /**
- * White full-screen splash that plays the brand animation for a minimum
- * of 5 seconds.  Dismisses only after both the timer AND all app data
- * have finished loading — so the user never sees any partial UI.
+ * White full-screen splash that plays the brand animation while the app
+ * boots.  Fades out as soon as `ready` is true — no artificial delay.
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -10,28 +9,19 @@ interface LoadingScreenProps {
   ready: boolean;
 }
 
-const MIN_DISPLAY_MS = 5000;
 const FADE_MS = 600;
 
 export function LoadingScreen({ ready }: LoadingScreenProps) {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
-  const [timerDone, setTimerDone] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setTimerDone(true), MIN_DISPLAY_MS);
-    return () => clearTimeout(id);
-  }, []);
-
-  const canDismiss = ready && timerDone;
-
-  useEffect(() => {
-    if (!canDismiss || fading) return;
+    if (!ready || fading) return;
     setFading(true);
     const id = setTimeout(() => setVisible(false), FADE_MS);
     return () => clearTimeout(id);
-  }, [canDismiss, fading]);
+  }, [ready, fading]);
 
   const handleCanPlay = useCallback(() => {
     videoRef.current?.play().catch(() => {});

@@ -1,8 +1,8 @@
 /**
  * ── useGlobeBoot ────────────────────────────────────────────────────────
  *
- * Async boot sequence: load region index, countries GeoJSON, nexus data.
- * Uses AbortController for clean cancellation.
+ * Async boot sequence: loads region index, countries TopoJSON, and nexus
+ * data **in parallel**, then wires them into the Cesium viewer.
  */
 
 import { useState, useCallback, useEffect, type RefObject } from "react";
@@ -27,6 +27,18 @@ interface UseGlobeBootArgs {
   ensureViewer: () => void;
 }
 
+async function fetchNexus(base: string): Promise<NexusDataFile | null> {
+  try {
+    const res = await fetch(`${base}data/nexus_exposure.json`);
+    if (!res.ok) return null;
+    const raw = await res.json();
+    return validateNexusData(raw) as NexusDataFile;
+  } catch {
+    console.warn("[boot] Nexus data not available, skipping color overlay");
+    return null;
+  }
+}
+
 export function useGlobeBoot({
   viewerRef,
   layersRef,
@@ -45,38 +57,32 @@ export function useGlobeBoot({
 
       ensureViewer();
 
-      await loadRegionIndex();
+      const base = import.meta.env.BASE_URL;
+
+      const [, geo, nexusFile] = await Promise.all([
+        loadRegionIndex(),
+        loadDataset(`${base}data/countries.topo.json`),
+        fetchNexus(base),
+      ]);
+
       if (signal?.aborted) return;
+
       setDataVersion((v) => v + 1);
 
-      if (!alive(viewerRef.current)) return;
-
-      const base = import.meta.env.BASE_URL;
-      const geo = await loadDataset(`${base}data/countries.topo.json`);
-      if (signal?.aborted) return;
+      if (!alive(viewerRef.current) || !layersRef.current) return;
 
       countriesRef.current = geo;
       setFocusGeometry(geo);
 
-      if (!alive(viewerRef.current) || !layersRef.current) return;
       await layersRef.current.setCountries(geo);
       if (signal?.aborted) return;
 
-      try {
-        const nexusRes = await fetch(`${base}data/nexus_exposure.json`);
-        if (nexusRes.ok && !signal?.aborted) {
-          const raw = await nexusRes.json();
-          const nexusFile = validateNexusData(raw) as NexusDataFile;
-          loadNexusFile(nexusFile);
-
-          const { stateNexus, countryIndex } = useNexusStore.getState();
-          layersRef.current?.setNexusData(stateNexus, countryIndex);
-        }
-      } catch {
-        console.warn("[boot] Nexus data not available, skipping color overlay");
+      if (nexusFile) {
+        loadNexusFile(nexusFile);
+        const { stateNexus, countryIndex } = useNexusStore.getState();
+        layersRef.current?.setNexusData(stateNexus, countryIndex);
       }
 
-      if (signal?.aborted) return;
       if (!alive(viewerRef.current)) return;
 
       enableAutoRotate(viewerRef.current);
