@@ -15,6 +15,7 @@ import {
   GeoJsonDataSource,
   Color,
   ColorMaterialProperty,
+  ConstantProperty,
   type Entity,
 } from "cesium";
 import type {
@@ -185,56 +186,29 @@ export class LayerManager {
   }
 
   /**
-   * Rebuild country and subregion layers with the correct outline color
-   * for the given theme. Rebuilding the GeoJsonDataSource from source
-   * GeoJSON is the only reliable way to change polyline stroke color in
-   * CesiumJS — patching entity properties doesn't trigger re-render.
+   * Update outline colors on all country/subregion entities then force
+   * CesiumJS to refresh by removing and re-adding the data source.
+   * Fully synchronous — no async gap means no race conditions.
    */
-  async recolorOutlines(isLight?: boolean): Promise<void> {
+  recolorOutlines(isLight?: boolean): void {
     if (!alive(this.viewer)) return;
     const light = isLight ?? isLightTheme();
-    const strokeColor = getRegionOutlineColor(light);
+    const outlineColor = getRegionOutlineColor(light);
 
-    if (this.countriesGeo) {
-      const wasHidden = this.countriesLayer ? !this.countriesLayer.show : false;
-      this.removeLayer(this.countriesLayer);
-      this.countriesLayer = null;
+    for (const layer of [this.countriesLayer, this.subregionsLayer]) {
+      if (!layer) continue;
 
-      const ds = await this.loadGeo(this.countriesGeo, {
-        stroke: strokeColor,
-        strokeWidth: REGION_OUTLINE_WIDTH,
-        fill: Color.TRANSPARENT,
-      });
-      if (ds && alive(this.viewer)) {
-        ds.name = "countries";
-        if (wasHidden) ds.show = false;
-        this.viewer.dataSources.add(ds);
-        this.countriesLayer = ds;
-        this.rebuildIndex(ds);
-        this.recolorCountries();
+      for (const entity of layer.entities.values) {
+        if (entity.polygon) {
+          entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
+        }
+        if (entity.polyline) {
+          entity.polyline.material = new ColorMaterialProperty(outlineColor);
+        }
       }
-    }
 
-    if (this.subregionsGeo && alive(this.viewer)) {
-      const wasHidden = this.subregionsLayer
-        ? !this.subregionsLayer.show
-        : false;
-      this.removeLayer(this.subregionsLayer);
-      this.subregionsLayer = null;
-
-      const ds = await this.loadGeo(this.subregionsGeo, {
-        stroke: strokeColor,
-        strokeWidth: REGION_OUTLINE_WIDTH,
-        fill: Color.TRANSPARENT,
-      });
-      if (ds && alive(this.viewer)) {
-        ds.name = "subregions";
-        if (wasHidden) ds.show = false;
-        this.viewer.dataSources.add(ds);
-        this.subregionsLayer = ds;
-        this.rebuildIndex(ds);
-        this.recolorSubregions();
-      }
+      this.viewer.dataSources.remove(layer, false);
+      this.viewer.dataSources.add(layer);
     }
   }
 
