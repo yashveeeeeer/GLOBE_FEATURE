@@ -11,7 +11,7 @@ const base = process.env.GITHUB_ACTIONS ? "/GLOBE_FEATURE/" : "/";
 export default defineConfig({
   base,
   define: {
-    CESIUM_BASE_URL: JSON.stringify(`${base}${cesiumBaseUrl}`),
+    CESIUM_BASE_URL: JSON.stringify(`${base}${cesiumBaseUrl}/`),
   },
   plugins: [
     react(),
