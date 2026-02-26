@@ -28,7 +28,9 @@ export function useRenderHealth(
       const viewer = viewerRef.current;
       if (!viewer || viewer.isDestroyed()) return;
 
-      const currentFrame = viewer.scene.frameState.frameNumber;
+      const scene = viewer.scene as unknown as Record<string, unknown>;
+      const fs = scene.frameState as { frameNumber?: number } | undefined;
+      const currentFrame = fs?.frameNumber ?? -1;
 
       if (currentFrame === lastFrame) {
         missCount++;
