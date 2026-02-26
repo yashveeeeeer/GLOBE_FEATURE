@@ -111,12 +111,25 @@ export function useGlobeBoot({
 
       if (nexusFile) {
         const { countryIndex } = useNexusStore.getState();
-        for (const countryId of Object.keys(countryIndex)) {
-          const entry = getRegionEntry(countryId);
-          if (entry?.childDatasetPath) {
-            prefetchDataset(entry.childDatasetPath);
+        const ids = Object.keys(countryIndex);
+        const PREFETCH_CONCURRENCY = 3;
+        const PREFETCH_DELAY_MS = 200;
+        let i = 0;
+        const prefetchNext = () => {
+          const batch: Promise<unknown>[] = [];
+          while (i < ids.length && batch.length < PREFETCH_CONCURRENCY) {
+            const entry = getRegionEntry(ids[i++]!);
+            if (entry?.childDatasetPath) {
+              batch.push(prefetchDataset(entry.childDatasetPath));
+            }
           }
-        }
+          if (batch.length > 0) {
+            Promise.all(batch).then(() => {
+              if (i < ids.length) setTimeout(prefetchNext, PREFETCH_DELAY_MS);
+            });
+          }
+        };
+        setTimeout(prefetchNext, 1000);
       }
     } catch (err) {
       console.error("[boot] Boot failed:", err);

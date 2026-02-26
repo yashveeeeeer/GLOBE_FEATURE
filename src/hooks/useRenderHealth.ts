@@ -7,7 +7,7 @@
  * flips to true so the UI can show a recovery banner.
  */
 
-import { useState, useEffect, type RefObject } from "react";
+import { useState, useEffect, useRef, type RefObject } from "react";
 import type { Viewer as CesiumViewer } from "cesium";
 
 const CHECK_INTERVAL_MS = 30_000;
@@ -17,6 +17,7 @@ export function useRenderHealth(
   enabled: boolean,
 ) {
   const [stalled, setStalled] = useState(false);
+  const stalledRef = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
@@ -34,17 +35,23 @@ export function useRenderHealth(
 
       if (currentFrame === lastFrame) {
         missCount++;
-        if (missCount >= 2) setStalled(true);
+        if (missCount >= 2 && !stalledRef.current) {
+          stalledRef.current = true;
+          setStalled(true);
+        }
       } else {
         missCount = 0;
-        if (stalled) setStalled(false);
+        if (stalledRef.current) {
+          stalledRef.current = false;
+          setStalled(false);
+        }
       }
 
       lastFrame = currentFrame;
     }, CHECK_INTERVAL_MS);
 
     return () => clearInterval(id);
-  }, [viewerRef, enabled, stalled]);
+  }, [viewerRef, enabled]);
 
   const recover = () => {
     window.location.reload();

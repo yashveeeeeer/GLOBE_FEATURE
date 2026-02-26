@@ -37,6 +37,10 @@ export function LoadingScreen({ ready }: LoadingScreenProps) {
     videoRef.current?.play().catch(() => {});
   }, []);
 
+  const handleVideoError = useCallback(() => {
+    setMinElapsed(true);
+  }, []);
+
   if (!visible) return null;
 
   return (
@@ -54,6 +58,7 @@ export function LoadingScreen({ ready }: LoadingScreenProps) {
           playsInline
           loop
           onCanPlay={handleCanPlay}
+          onError={handleVideoError}
         />
       </div>
     </div>

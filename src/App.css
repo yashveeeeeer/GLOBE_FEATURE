@@ -54,7 +54,7 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #07090F;
   opacity: 1;
   transition: opacity var(--fade-ms, 800ms) ease-out;
 }
@@ -120,10 +120,6 @@ body,
   display: none !important;
 }
 
-.app__globe-mount .cesium-widget-errorPanel,
-.cesium-widget-errorPanel {
-  display: none !important;
-}
 
 /* ── Sidebar ─────────────────────────────────────────────────────────── */
 

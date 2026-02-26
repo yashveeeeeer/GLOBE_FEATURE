@@ -190,7 +190,6 @@ export class LayerManager {
 
     for (const layer of [this.countriesLayer, this.subregionsLayer]) {
       if (!layer) continue;
-
       for (const entity of layer.entities.values) {
         if (entity.polygon) {
           entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
@@ -199,10 +198,9 @@ export class LayerManager {
           entity.polyline.material = new ColorMaterialProperty(outlineColor);
         }
       }
-
-      this.viewer.dataSources.remove(layer, false);
-      this.viewer.dataSources.add(layer);
     }
+
+    document.dispatchEvent(new Event("outline-recolor"));
   }
 
   private recolorCountries(): void {

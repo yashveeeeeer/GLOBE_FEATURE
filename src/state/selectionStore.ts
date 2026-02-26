@@ -128,10 +128,12 @@ export const useSelectionStore = create<SelectionStore>()((set, get) => ({
   },
 }));
 
-let _hashListenerAttached = false;
+declare global {
+  interface Window { __commenda_hashListener?: boolean; }
+}
 
-if (typeof window !== "undefined" && !_hashListenerAttached) {
-  _hashListenerAttached = true;
+if (typeof window !== "undefined" && !window.__commenda_hashListener) {
+  window.__commenda_hashListener = true;
   window.addEventListener("hashchange", () => {
     const fromHash = hashToState();
     const current = useSelectionStore.getState();

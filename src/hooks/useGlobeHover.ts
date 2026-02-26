@@ -72,6 +72,12 @@ export function useGlobeHover(
       prevMaterialRef.current = null;
     }
 
+    function onOutlineRecolor() {
+      prevEntityRef.current = null;
+      prevMaterialRef.current = null;
+    }
+    document.addEventListener("outline-recolor", onOutlineRecolor);
+
     function scheduleHoverUpdate(info: HoverInfo | null) {
       const now = performance.now();
       pendingHoverRef.current = info;
@@ -142,6 +148,7 @@ export function useGlobeHover(
     return () => {
       aborted = true;
       cancelAnimationFrame(rafRef.current);
+      document.removeEventListener("outline-recolor", onOutlineRecolor);
       restorePrevious();
       if (handlerRef.current) {
         handlerRef.current.destroy();

@@ -14,9 +14,9 @@ function tokens() {
 
 /* ── Region outline ──────────────────────────────────────────────────── */
 
-export const REGION_OUTLINE_WIDTH = 1.5;
+export const REGION_OUTLINE_WIDTH = 2.0;
 export function getRegionOutlineColor(isLight: boolean): Color {
-  return Color.fromCssColorString(isLight ? "#000000" : "#FFFFFF").withAlpha(0.9);
+  return Color.fromCssColorString(isLight ? "#1a1a2e" : "#FFFFFF").withAlpha(1.0);
 }
 
 /* ── Selected region ─────────────────────────────────────────────────── */
