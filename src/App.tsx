@@ -61,17 +61,12 @@ export default function App() {
   }, [filters, layersRef]);
 
   useEffect(() => {
-    let rafId = 0;
     const onThemeChange = (e: Event) => {
       const isLight = (e as CustomEvent<{ isLight: boolean }>).detail.isLight;
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        layersRef.current?.recolorOutlines(isLight);
-      });
+      layersRef.current?.recolorOutlines(isLight);
     };
     document.addEventListener("theme-change", onThemeChange);
     return () => {
-      cancelAnimationFrame(rafId);
       document.removeEventListener("theme-change", onThemeChange);
     };
   }, [layersRef]);
