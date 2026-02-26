@@ -1,8 +1,8 @@
 /**
- * ── Breadcrumb navigation ──────────────────────────────────────────────
+ * ── Breadcrumb (status bar) ─────────────────────────────────────────────
  *
- * Shows the current drill path: World > Country > Subregion
- * Clicking an ancestor segment navigates back to that level.
+ * Shows the current drill path as an uppercase status line at the bottom
+ * of the sidebar: WORLD > UNITED STATES > CA
  */
 
 import { memo } from "react";
@@ -17,7 +17,7 @@ export const Breadcrumb = memo(function Breadcrumb() {
 
   crumbs.push({
     key: "world",
-    label: "World",
+    label: "WORLD",
     onClick: selectionLevel !== "world" ? resetToWorld : undefined,
   });
 
@@ -25,7 +25,7 @@ export const Breadcrumb = memo(function Breadcrumb() {
     const entry = getRegionEntry(selectedCountryId);
     crumbs.push({
       key: selectedCountryId,
-      label: entry?.name ?? selectedCountryId,
+      label: (entry?.name ?? selectedCountryId).toUpperCase(),
       onClick: selectionLevel === "subregion" ? goBack : undefined,
     });
   }
@@ -34,7 +34,7 @@ export const Breadcrumb = memo(function Breadcrumb() {
     const entry = getRegionEntry(selectedSubregionId);
     crumbs.push({
       key: selectedSubregionId,
-      label: entry?.name ?? selectedSubregionId,
+      label: (entry?.name ?? selectedSubregionId).toUpperCase(),
     });
   }
 
@@ -42,7 +42,7 @@ export const Breadcrumb = memo(function Breadcrumb() {
     <nav className="breadcrumb" aria-label="Drill-down navigation">
       {crumbs.map((crumb, i) => (
         <span key={crumb.key} className="breadcrumb__segment">
-          {i > 0 && <span className="breadcrumb__sep"> › </span>}
+          {i > 0 && <span className="breadcrumb__sep">&gt;</span>}
           {crumb.onClick ? (
             <button
               type="button"

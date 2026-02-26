@@ -1,8 +1,7 @@
 /**
  * ── Filter Panel ────────────────────────────────────────────────────────
  *
- * Toggle buttons for Physical / Economic nexus filters.
- * Toggling re-colors the globe via the Zustand nexus store.
+ * Minimal inline text toggles for Physical / Economic nexus filters.
  */
 
 import { memo } from "react";
@@ -20,29 +19,25 @@ export const FilterPanel = memo(function FilterPanel() {
 
   return (
     <div className="filter-panel">
-      <span className="filter-panel__label">Filters</span>
-      <div className="filter-panel__toggles">
-        <button
-          type="button"
-          className={`filter-panel__btn ${physical ? "filter-panel__btn--active" : ""}`}
-          onClick={togglePhysical}
-          style={{ "--filter-color": NEXUS_PHYSICAL_FILL } as React.CSSProperties}
-          aria-pressed={physical}
-        >
-          <span className="filter-panel__indicator" />
-          Physical Nexus
-        </button>
-        <button
-          type="button"
-          className={`filter-panel__btn ${economic ? "filter-panel__btn--active" : ""}`}
-          onClick={toggleEconomic}
-          style={{ "--filter-color": NEXUS_ECONOMIC_FILL } as React.CSSProperties}
-          aria-pressed={economic}
-        >
-          <span className="filter-panel__indicator" />
-          Economic Nexus
-        </button>
-      </div>
+      <span className="filter-panel__label">FILTER</span>
+      <button
+        type="button"
+        className={`filter-panel__toggle${physical ? " filter-panel__toggle--active" : ""}`}
+        onClick={togglePhysical}
+        style={physical ? { color: NEXUS_PHYSICAL_FILL } : undefined}
+        aria-pressed={physical}
+      >
+        Physical
+      </button>
+      <button
+        type="button"
+        className={`filter-panel__toggle${economic ? " filter-panel__toggle--active" : ""}`}
+        onClick={toggleEconomic}
+        style={economic ? { color: NEXUS_ECONOMIC_FILL } : undefined}
+        aria-pressed={economic}
+      >
+        Economic
+      </button>
     </div>
   );
 });

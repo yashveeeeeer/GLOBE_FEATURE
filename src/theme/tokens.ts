@@ -40,6 +40,7 @@ export interface TokenSet {
   // Typography
   fontFamily: string;
   fontHeading: string;
+  fontMono: string;
 
   // Radii
   radius: string;
@@ -48,40 +49,33 @@ export interface TokenSet {
 }
 
 export const defaultTokens: TokenSet = {
-  // Backgrounds
-  bg: "#0B0F1A",
-  surface1: "#111827",
-  surface2: "#1E2536",
-  surfaceHover: "#263044",
+  bg: "#07090F",
+  surface1: "#0D1117",
+  surface2: "#161B22",
+  surfaceHover: "#1C2333",
 
-  // Text
-  text1: "#F1F5F9",
-  text2: "#CBD5E1",
-  muted: "#64748B",
+  text1: "#E6EDF3",
+  text2: "#8B949E",
+  muted: "#484F58",
 
-  // Borders & rings
-  border: "#1E293B",
-  ring: "#3B82F6",
+  border: "#21262D",
+  ring: "#58A6FF",
 
-  // Accent (Commenda blue)
-  accent: "#3B82F6",
-  accentHover: "#2563EB",
+  accent: "#58A6FF",
+  accentHover: "#79C0FF",
   accentContrast: "#FFFFFF",
 
-  // Semantic
-  danger: "#EF4444",
-  warning: "#F59E0B",
-  success: "#10B981",
+  danger: "#F85149",
+  warning: "#F0883E",
+  success: "#3FB950",
 
-  // Shadow
   shadowColor: "220 40% 2%",
 
-  // Typography
   fontFamily: "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
   fontHeading: "'Inter', 'Segoe UI', system-ui, sans-serif",
+  fontMono: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
 
-  // Radii
-  radius: "12px",
-  radiusSm: "8px",
-  radiusLg: "16px",
+  radius: "4px",
+  radiusSm: "2px",
+  radiusLg: "6px",
 };

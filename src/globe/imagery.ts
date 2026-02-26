@@ -3,6 +3,9 @@
  *
  * Day:   Cesium's bundled Natural Earth II tiles (local, no network).
  * Night: NASA GIBS VIIRS City Lights (WebMercator, free, no API key).
+ *
+ * Theme switches use a cross-dissolve: the new layer fades in on top of
+ * the old one so the globe never goes blank.
  */
 
 import {
@@ -13,6 +16,8 @@ import {
   WebMercatorTilingScheme,
   Credit,
 } from "cesium";
+
+const CROSSFADE_MS = 700;
 
 async function createDayProvider(): Promise<TileMapServiceImageryProvider> {
   return TileMapServiceImageryProvider.fromUrl(
@@ -33,30 +38,84 @@ function createNightProvider(): WebMapTileServiceImageryProvider {
   });
 }
 
+let _fadeRaf = 0;
+
+function cancelPendingFade(): void {
+  if (_fadeRaf) {
+    cancelAnimationFrame(_fadeRaf);
+    _fadeRaf = 0;
+  }
+}
+
 /**
- * Set the globe imagery to day (Natural Earth II) or night (City Lights).
- * Removes all existing imagery layers first.
+ * Animate `layer.alpha` from `from` to `to` over `durationMs`, then call
+ * `onDone`. Uses requestAnimationFrame for smooth 60fps interpolation.
+ */
+function fadeLayer(
+  layer: ImageryLayer,
+  from: number,
+  to: number,
+  durationMs: number,
+  onDone?: () => void,
+): void {
+  cancelPendingFade();
+  const start = performance.now();
+  layer.alpha = from;
+
+  const step = (now: number) => {
+    const t = Math.min((now - start) / durationMs, 1);
+    const eased = t * t * (3 - 2 * t);
+    layer.alpha = from + (to - from) * eased;
+    if (t < 1) {
+      _fadeRaf = requestAnimationFrame(step);
+    } else {
+      layer.alpha = to;
+      _fadeRaf = 0;
+      onDone?.();
+    }
+  };
+  _fadeRaf = requestAnimationFrame(step);
+}
+
+/**
+ * Cross-dissolve to the target imagery (day or night). The new layer
+ * fades in on top of the old one so the globe is never blank.
  */
 export async function setGlobeImagery(
   viewer: Viewer,
   isLight: boolean,
 ): Promise<void> {
   if (!viewer || viewer.isDestroyed()) return;
+  cancelPendingFade();
 
   const layers = viewer.imageryLayers;
-  layers.removeAll();
+  const oldCount = layers.length;
 
   try {
-    let layer: ImageryLayer;
+    let newLayer: ImageryLayer;
     if (isLight) {
       const day = await createDayProvider();
-      layer = layers.addImageryProvider(day);
+      if (viewer.isDestroyed()) return;
+      newLayer = layers.addImageryProvider(day);
     } else {
       const night = createNightProvider();
-      layer = layers.addImageryProvider(night);
+      newLayer = layers.addImageryProvider(night);
     }
-    layer.alpha = 1.0;
+
+    if (oldCount === 0) {
+      newLayer.alpha = 1.0;
+      return;
+    }
+
+    newLayer.alpha = 0;
+    fadeLayer(newLayer, 0, 1, CROSSFADE_MS, () => {
+      if (viewer.isDestroyed()) return;
+      while (layers.length > 1) {
+        layers.remove(layers.get(0), true);
+      }
+    });
   } catch (err) {
     console.warn("[imagery] Failed to load imagery, falling back to base color", err);
+    layers.removeAll();
   }
 }

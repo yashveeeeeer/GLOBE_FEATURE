@@ -14,6 +14,7 @@ import {
   GeoJsonDataSource,
   Color,
   ColorMaterialProperty,
+  ConstantProperty,
   type Entity,
 } from "cesium";
 import type {
@@ -172,6 +173,23 @@ export class LayerManager {
     this.filters = filters;
     this.recolorCountries();
     this.recolorSubregions();
+  }
+
+  recolorOutlines(isLight?: boolean): void {
+    const light = isLight ?? isLightTheme();
+    const outlineColor = getRegionOutlineColor(light);
+
+    for (const layer of [this.countriesLayer, this.subregionsLayer]) {
+      if (!layer) continue;
+      for (const entity of layer.entities.values) {
+        if (entity.polygon) {
+          entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
+        }
+        if (entity.polyline) {
+          entity.polyline.material = new ColorMaterialProperty(outlineColor);
+        }
+      }
+    }
   }
 
   private recolorCountries(): void {

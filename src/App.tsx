@@ -2,10 +2,8 @@
  * ── App root ───────────────────────────────────────────────────────────
  *
  * Two-pane layout: Globe (left 65%) + Sidebar (right 35%).
- * Composes custom hooks for viewer lifecycle, boot, selection, and input.
- *
- * A full-screen video loading screen covers everything until all data
- * is fetched and the globe is interactive — zero visible lag.
+ * NASA technical-publication aesthetic: sharp, functional, monospaced
+ * readouts. Breadcrumb sits at the bottom as a status bar.
  */
 
 import { useEffect } from "react";
@@ -35,12 +33,13 @@ export default function App() {
   const { mountRef, viewerRef, layersRef, countriesRef, ensureViewer } =
     useGlobeViewer();
 
-  const { dataVersion, setDataVersion, globeReady, error, boot } = useGlobeBoot({
-    viewerRef,
-    layersRef,
-    countriesRef,
-    ensureViewer,
-  });
+  const { dataVersion, setDataVersion, globeReady, error, boot } =
+    useGlobeBoot({
+      viewerRef,
+      layersRef,
+      countriesRef,
+      ensureViewer,
+    });
 
   const { subLoading } = useSelectionEffect({
     viewerRef,
@@ -52,15 +51,20 @@ export default function App() {
 
   useKeyboardReset(mountRef);
 
-  /* ── Re-color globe when filters change ────────────────────────────── */
-
   const filters = useNexusStore((s) => s.filters);
 
   useEffect(() => {
     layersRef.current?.recolorForFilters(filters);
   }, [filters, layersRef]);
 
-  /* ── Render ────────────────────────────────────────────────────────── */
+  useEffect(() => {
+    const onThemeChange = (e: Event) => {
+      const isLight = (e as CustomEvent<{ isLight: boolean }>).detail.isLight;
+      layersRef.current?.recolorOutlines(isLight);
+    };
+    document.addEventListener("theme-change", onThemeChange);
+    return () => document.removeEventListener("theme-change", onThemeChange);
+  }, [layersRef]);
 
   return (
     <>
@@ -84,35 +88,38 @@ export default function App() {
                     className="app__logo-img app__logo-img--dark"
                     src={`${import.meta.env.BASE_URL}assets/logo-light.png`}
                     alt="Commenda"
-                    width={28}
-                    height={28}
+                    width={24}
+                    height={24}
                   />
                   <img
                     className="app__logo-img app__logo-img--light"
                     src={`${import.meta.env.BASE_URL}assets/logo-dark.png`}
                     alt="Commenda"
-                    width={28}
-                    height={28}
+                    width={24}
+                    height={24}
                   />
                 </div>
                 <div className="app__brand-text">
-                  <h1 className="app__title">Commenda</h1>
-                  <span className="app__subtitle">Nexus Exposure Map</span>
+                  <h1 className="app__title">COMMENDA</h1>
+                  <span className="app__subtitle">NEXUS EXPOSURE</span>
                 </div>
               </div>
               <ThemeToggle />
             </div>
-            <Breadcrumb />
           </header>
 
-          <FilterPanel />
           <StatsBar dataVersion={dataVersion} />
+          <FilterPanel />
 
           {error ? (
             <ErrorBanner message={error} onRetry={() => boot()} />
           ) : (
             <RegionTable dataVersion={dataVersion} loading={subLoading} />
           )}
+
+          <footer className="app__status-bar">
+            <Breadcrumb />
+          </footer>
         </aside>
       </div>
     </>

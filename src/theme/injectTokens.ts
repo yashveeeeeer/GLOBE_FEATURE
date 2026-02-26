@@ -31,6 +31,7 @@ const TOKEN_TO_VAR: Record<keyof TokenSet, string> = {
   shadowColor: "--shadow-color",
   fontFamily: "--font-family",
   fontHeading: "--font-heading",
+  fontMono: "--font-mono",
   radius: "--radius",
   radiusSm: "--radius-sm",
   radiusLg: "--radius-lg",

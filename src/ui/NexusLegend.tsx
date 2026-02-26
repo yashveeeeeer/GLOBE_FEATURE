@@ -1,8 +1,8 @@
 /**
  * ── Nexus Legend ─────────────────────────────────────────────────────────
  *
- * Dynamic legend that reflects the active nexus filters.
- * Shows only the relevant color categories.
+ * Flat text overlay on the globe. No card, no blur -- just colored
+ * squares and uppercase labels with a text shadow for readability.
  */
 
 import { memo } from "react";
@@ -26,26 +26,22 @@ export const NexusLegend = memo(function NexusLegend() {
   const items: LegendItem[] = [];
 
   if (physical && economic) {
-    items.push({ color: NEXUS_BOTH_FILL, label: "Both Nexus" });
-    items.push({ color: NEXUS_PHYSICAL_FILL, label: "Physical Only" });
-    items.push({ color: NEXUS_ECONOMIC_FILL, label: "Economic Only" });
+    items.push({ color: NEXUS_BOTH_FILL, label: "BOTH" });
+    items.push({ color: NEXUS_PHYSICAL_FILL, label: "PHYSICAL" });
+    items.push({ color: NEXUS_ECONOMIC_FILL, label: "ECONOMIC" });
   } else if (physical) {
-    items.push({ color: NEXUS_PHYSICAL_FILL, label: "Physical Nexus" });
+    items.push({ color: NEXUS_PHYSICAL_FILL, label: "PHYSICAL" });
   } else if (economic) {
-    items.push({ color: NEXUS_ECONOMIC_FILL, label: "Economic Nexus" });
+    items.push({ color: NEXUS_ECONOMIC_FILL, label: "ECONOMIC" });
   }
 
-  items.push({ color: NEXUS_CLEAR_FILL, label: "No Nexus" });
+  items.push({ color: NEXUS_CLEAR_FILL, label: "CLEAR" });
 
   return (
     <div className="nexus-legend">
-      <span className="nexus-legend__title">Exposure</span>
       {items.map((item) => (
         <div key={item.label} className="nexus-legend__item">
-          <span
-            className="nexus-legend__swatch"
-            style={{ background: item.color, "--swatch-color": item.color } as React.CSSProperties}
-          />
+          <span className="nexus-legend__swatch" style={{ background: item.color }} />
           <span className="nexus-legend__label">{item.label}</span>
         </div>
       ))}

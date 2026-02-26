@@ -154,14 +154,26 @@ export async function loadDataset(
   let fc: RegionFeatureCollection;
 
   try {
-    // Try Web Worker first (JSON.parse + TopoJSON conversion off main thread)
     fc = await parseViaWorker(path);
   } catch {
-    // Fallback to main thread
     fc = await parseOnMainThread(path);
   }
 
   cacheSet(path, fc);
   return fc;
+}
+
+const _prefetching = new Set<string>();
+
+/**
+ * Eagerly load a dataset into the LRU cache without blocking. Silently
+ * ignores errors -- the real load path will surface them later.
+ */
+export function prefetchDataset(path: string): void {
+  if (cacheGet(path) || _prefetching.has(path)) return;
+  _prefetching.add(path);
+  loadDataset(path)
+    .catch(() => {})
+    .finally(() => _prefetching.delete(path));
 }
 

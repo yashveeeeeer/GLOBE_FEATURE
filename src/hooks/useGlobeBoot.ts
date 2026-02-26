@@ -39,6 +39,12 @@ async function fetchNexus(base: string): Promise<NexusDataFile | null> {
   }
 }
 
+export interface BootStatus {
+  regionIndex: boolean;
+  geoData: boolean;
+  nexusData: boolean;
+}
+
 export function useGlobeBoot({
   viewerRef,
   layersRef,
@@ -48,22 +54,37 @@ export function useGlobeBoot({
   const [dataVersion, setDataVersion] = useState(0);
   const [globeReady, setGlobeReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bootStatus, setBootStatus] = useState<BootStatus>({
+    regionIndex: false,
+    geoData: false,
+    nexusData: false,
+  });
   const loadNexusFile = useNexusStore((s) => s.loadNexusFile);
 
   const boot = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(null);
       setGlobeReady(false);
+      setBootStatus({ regionIndex: false, geoData: false, nexusData: false });
 
       ensureViewer();
 
       const base = import.meta.env.BASE_URL;
 
-      const [, geo, nexusFile] = await Promise.all([
-        loadRegionIndex(),
-        loadDataset(`${base}data/countries.topo.json`),
-        fetchNexus(base),
-      ]);
+      const regionIndexP = loadRegionIndex().then((v) => {
+        setBootStatus((s) => ({ ...s, regionIndex: true }));
+        return v;
+      });
+      const geoP = loadDataset(`${base}data/countries.topo.json`).then((v) => {
+        setBootStatus((s) => ({ ...s, geoData: true }));
+        return v;
+      });
+      const nexusP = fetchNexus(base).then((v) => {
+        setBootStatus((s) => ({ ...s, nexusData: true }));
+        return v;
+      });
+
+      const [, geo, nexusFile] = await Promise.all([regionIndexP, geoP, nexusP]);
 
       if (signal?.aborted) return;
 
@@ -109,5 +130,5 @@ export function useGlobeBoot({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { dataVersion, setDataVersion, globeReady, error, boot };
+  return { dataVersion, setDataVersion, globeReady, error, boot, bootStatus };
 }

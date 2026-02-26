@@ -1,9 +1,8 @@
 /**
- * ── Region Table (master-detail) with search + virtualization ──────────
+ * ── Region Manifest ─────────────────────────────────────────────────────
  *
- * Uses react-window v2 List for large lists.
- * Search is debounced to avoid re-computing rows on every keystroke.
- * Rows include nexus status indicators when exposure data is available.
+ * Virtualized jurisdiction list with monospaced status codes (PHY, ECO,
+ * BTH, CLR). Hover-prefetches subregion data for instant drill-down.
  */
 
 import { useMemo, useCallback, useState, useEffect, useRef, memo } from "react";
@@ -17,6 +16,7 @@ import {
   NEXUS_BOTH_FILL,
   NEXUS_CLEAR_FILL,
 } from "../globe/styles";
+import { prefetchDataset } from "../data/loader";
 import type { RegionIndexEntry, NexusStateData, NexusFilters } from "../types";
 
 interface RegionTableProps {
@@ -24,7 +24,7 @@ interface RegionTableProps {
   loading?: boolean;
 }
 
-const ROW_HEIGHT = 52;
+const ROW_HEIGHT = 44;
 const OVERSCAN = 8;
 const DEBOUNCE_MS = 150;
 
@@ -33,19 +33,20 @@ interface RowData {
   selectedCountryId: string | null;
   selectedSubregionId: string | null;
   onRowClick: (id: string, entry: RegionIndexEntry) => void;
+  onRowHover: (id: string, entry: RegionIndexEntry) => void;
   stateNexus: NexusStateData;
   countryIndex: Record<string, string[]>;
   filters: NexusFilters;
   selectionLevel: string;
 }
 
-function getNexusStatusForRow(
+function getNexusCode(
   id: string,
   entry: RegionIndexEntry,
   stateNexus: NexusStateData,
   countryIndex: Record<string, string[]>,
   filters: NexusFilters,
-): { color: string; label: string } | null {
+): { color: string; code: string } | null {
   if (entry.level === "country") {
     const stateIds = countryIndex[id];
     if (!stateIds) return null;
@@ -57,10 +58,10 @@ function getNexusStatusForRow(
       if (filters.physical && e.physical) hasPhy = true;
       if (filters.economic && e.economic) hasEco = true;
     }
-    if (hasPhy && hasEco) return { color: NEXUS_BOTH_FILL, label: "Both" };
-    if (hasPhy) return { color: NEXUS_PHYSICAL_FILL, label: "Physical" };
-    if (hasEco) return { color: NEXUS_ECONOMIC_FILL, label: "Economic" };
-    return { color: NEXUS_CLEAR_FILL, label: "Clear" };
+    if (hasPhy && hasEco) return { color: NEXUS_BOTH_FILL, code: "BTH" };
+    if (hasPhy) return { color: NEXUS_PHYSICAL_FILL, code: "PHY" };
+    if (hasEco) return { color: NEXUS_ECONOMIC_FILL, code: "ECO" };
+    return { color: NEXUS_CLEAR_FILL, code: "CLR" };
   }
 
   if (entry.level === "subregion") {
@@ -68,10 +69,10 @@ function getNexusStatusForRow(
     if (!e) return null;
     const showPhy = filters.physical && e.physical;
     const showEco = filters.economic && e.economic;
-    if (showPhy && showEco) return { color: NEXUS_BOTH_FILL, label: "Both" };
-    if (showPhy) return { color: NEXUS_PHYSICAL_FILL, label: "Physical" };
-    if (showEco) return { color: NEXUS_ECONOMIC_FILL, label: "Economic" };
-    return { color: NEXUS_CLEAR_FILL, label: "Clear" };
+    if (showPhy && showEco) return { color: NEXUS_BOTH_FILL, code: "BTH" };
+    if (showPhy) return { color: NEXUS_PHYSICAL_FILL, code: "PHY" };
+    if (showEco) return { color: NEXUS_ECONOMIC_FILL, code: "ECO" };
+    return { color: NEXUS_CLEAR_FILL, code: "CLR" };
   }
 
   return null;
@@ -80,7 +81,7 @@ function getNexusStatusForRow(
 function RowComponent(props: RowComponentProps<RowData>) {
   const {
     index, style, rows, selectedCountryId, selectedSubregionId,
-    onRowClick, stateNexus, countryIndex, filters, selectionLevel,
+    onRowClick, onRowHover, stateNexus, countryIndex, filters, selectionLevel,
   } = props;
   const item = rows[index];
   if (!item) return null;
@@ -89,14 +90,15 @@ function RowComponent(props: RowComponentProps<RowData>) {
     (entry.level === "country" && id === selectedCountryId) ||
     (entry.level === "subregion" && id === selectedSubregionId);
 
-  const nexus = getNexusStatusForRow(id, entry, stateNexus, countryIndex, filters);
-  const canDrill = entry.level === "country" && selectionLevel !== "subregion";
+  const nexus = getNexusCode(id, entry, stateNexus, countryIndex, filters);
+  void selectionLevel;
 
   return (
     <div
       style={style}
-      className={`region-table__vrow ${isSelected ? "region-table__vrow--selected" : ""}`}
+      className={`manifest__row${isSelected ? " manifest__row--selected" : ""}`}
       onClick={() => onRowClick(id, entry)}
+      onMouseEnter={() => onRowHover(id, entry)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -106,20 +108,10 @@ function RowComponent(props: RowComponentProps<RowData>) {
         }
       }}
     >
-      <span className="region-table__vrow-name">{entry.name}</span>
-      {nexus && nexus.label !== "Clear" && (
-        <span
-          className="region-table__vrow-badge"
-          style={{ "--badge-color": nexus.color } as React.CSSProperties}
-        >
-          {nexus.label}
-        </span>
-      )}
-      {canDrill && (
-        <span className="region-table__vrow-chevron">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+      <span className="manifest__row-name">{entry.name}</span>
+      {nexus && (
+        <span className="manifest__row-code" style={{ color: nexus.color }}>
+          {nexus.code}
         </span>
       )}
     </div>
@@ -128,11 +120,11 @@ function RowComponent(props: RowComponentProps<RowData>) {
 
 function SkeletonRows() {
   return (
-    <div className="region-table__skeleton">
-      {Array.from({ length: 8 }, (_, i) => (
-        <div key={i} className="region-table__skeleton-row" style={{ animationDelay: `${i * 60}ms` }}>
-          <span className="region-table__skeleton-bar" style={{ width: `${40 + Math.random() * 35}%` }} />
-          <span className="region-table__skeleton-badge" />
+    <div className="manifest__skeleton">
+      {Array.from({ length: 10 }, (_, i) => (
+        <div key={i} className="manifest__skeleton-row">
+          <span className="manifest__skeleton-bar" style={{ width: `${35 + Math.random() * 30}%` }} />
+          <span className="manifest__skeleton-code">---</span>
         </div>
       ))}
     </div>
@@ -167,6 +159,14 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, DEBOUNCE_MS);
   const inputRef = useRef<HTMLInputElement>(null);
+  const prevLevelRef = useRef(selectionLevel);
+
+  useEffect(() => {
+    if (prevLevelRef.current !== selectionLevel) {
+      setSearch("");
+      prevLevelRef.current = selectionLevel;
+    }
+  }, [selectionLevel]);
 
   const { rows, emptyMessage, levelLabel } = useMemo(() => {
     void dataVersion;
@@ -208,68 +208,54 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
     [selectCountry, selectSubregion],
   );
 
-  const clearSearch = useCallback(() => {
-    setSearch("");
-    inputRef.current?.focus();
+  const handleRowHover = useCallback(
+    (id: string, entry: RegionIndexEntry) => {
+      if (entry.level === "country" && entry.childDatasetPath) {
+        prefetchDataset(`${import.meta.env.BASE_URL}${entry.childDatasetPath}`);
+      }
+    },
+    [],
+  );
+
+  const handleSearchKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setSearch("");
+      inputRef.current?.blur();
+    }
   }, []);
 
   return (
-    <div className="region-table">
-      <div className="region-table__search">
-        <div className="region-table__search-wrap">
-          <svg className="region-table__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder={`Search ${levelLabel}…`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="region-table__search-input"
-          />
-          {search && (
-            <button
-              type="button"
-              className="region-table__search-clear"
-              onClick={clearSearch}
-              aria-label="Clear search"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          )}
-        </div>
+    <div className="manifest">
+      <div className="manifest__search">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder={`SEARCH ${levelLabel.toUpperCase()}...`}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+          className="manifest__search-input"
+        />
       </div>
 
-      <div className="region-table__toolbar">
-        <span className="region-table__count">
+      <div className="manifest__header">
+        <span className="manifest__header-col">JURISDICTION</span>
+        <span className="manifest__header-col manifest__header-col--right">STATUS</span>
+      </div>
+
+      <div className="manifest__toolbar">
+        <span className="manifest__count">
           {rows.length} {levelLabel}
         </span>
-        {debouncedSearch && (
-          <span className="region-table__filter-badge">filtered</span>
-        )}
-        {loading && <span className="region-table__spinner" />}
+        {debouncedSearch && <span className="manifest__filtered">FILTERED</span>}
+        {loading && <span className="manifest__spinner" />}
       </div>
 
-      <div className="region-table__header">
-        <span className="region-table__header-name">Region</span>
-        <span className="region-table__header-status">Status</span>
-      </div>
-
-      <div className="region-table__body">
+      <div className="manifest__body">
         {loading && rows.length === 0 ? (
           <SkeletonRows />
         ) : rows.length === 0 ? (
-          <div className="region-table__empty">
-            <div className="region-table__empty-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </div>
+          <div className="manifest__empty">
             {debouncedSearch ? `No ${levelLabel} match "${debouncedSearch}"` : emptyMessage}
           </div>
         ) : (
@@ -283,6 +269,7 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
               selectedCountryId,
               selectedSubregionId,
               onRowClick: handleRowClick,
+              onRowHover: handleRowHover,
               stateNexus,
               countryIndex,
               filters,

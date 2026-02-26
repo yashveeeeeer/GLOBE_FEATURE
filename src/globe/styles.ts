@@ -16,9 +16,7 @@ function tokens() {
 
 export const REGION_OUTLINE_WIDTH = 1.5;
 export function getRegionOutlineColor(isLight: boolean): Color {
-  // Keep a strong white stroke in dark mode for contrast;
-  // use a deep navy stroke in light mode for readability.
-  return Color.fromCssColorString(isLight ? "#1E2A44" : "#FFFFFF").withAlpha(0.9);
+  return Color.fromCssColorString(isLight ? "#000000" : "#FFFFFF").withAlpha(0.9);
 }
 
 /* ── Selected region ─────────────────────────────────────────────────── */

@@ -9,7 +9,7 @@
  * Uses AbortController for clean cancellation of async work.
  */
 
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type { Viewer as CesiumViewer } from "cesium";
 
 import { useSelectionStore } from "../state/selectionStore";
@@ -42,13 +42,15 @@ export function useSelectionEffect({
   setDataVersion,
 }: UseSelectionEffectArgs) {
   const [subLoading, setSubLoading] = useState(false);
+  const dataVersionRef = useRef(dataVersion);
+  dataVersionRef.current = dataVersion;
 
   const selectionLevel = useSelectionStore((s) => s.selectionLevel);
   const selectedCountryId = useSelectionStore((s) => s.selectedCountryId);
   const selectedSubregionId = useSelectionStore((s) => s.selectedSubregionId);
 
   useEffect(() => {
-    if (dataVersion === 0) return;
+    if (dataVersionRef.current === 0) return;
     if (!alive(viewerRef.current) || !layersRef.current) return;
 
     const ac = new AbortController();
@@ -73,7 +75,6 @@ export function useSelectionEffect({
         if (selectionLevel === "country" && selectedCountryId) {
           disableAutoRotate();
           lm.hideCountries();
-          lm.showSubregions();
           lm.clearHighlight();
 
           if (!ac.signal.aborted && alive(viewerRef.current)) {
@@ -122,7 +123,8 @@ export function useSelectionEffect({
     })();
 
     return () => ac.abort();
-  }, [selectionLevel, selectedCountryId, selectedSubregionId, dataVersion, viewerRef, layersRef, countriesRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectionLevel, selectedCountryId, selectedSubregionId, viewerRef, layersRef, countriesRef]);
 
   return { subLoading };
 }

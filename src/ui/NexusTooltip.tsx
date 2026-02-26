@@ -1,8 +1,8 @@
 /**
  * ── Nexus Tooltip ───────────────────────────────────────────────────────
  *
- * Shows a positioned tooltip when hovering a state/subregion on the globe.
- * Displays the state name and Physical/Economic nexus breakdown.
+ * Minimal solid tooltip on globe hover. No blur, no glass-morphism.
+ * Monospaced YES/NO status values.
  */
 
 import { memo, type RefObject } from "react";
@@ -10,10 +10,6 @@ import type { Viewer as CesiumViewer } from "cesium";
 import { useGlobeHover } from "../hooks/useGlobeHover";
 import { useNexusStore } from "../state/nexusStore";
 import { getRegionEntry } from "../data/regionIndex";
-import {
-  NEXUS_PHYSICAL_FILL,
-  NEXUS_ECONOMIC_FILL,
-} from "../globe/styles";
 
 interface NexusTooltipProps {
   viewerRef: RefObject<CesiumViewer | null>;
@@ -31,8 +27,8 @@ export const NexusTooltip = memo(function NexusTooltip({ viewerRef }: NexusToolt
 
   if (!entry && !regionEntry) return null;
 
-  const tooltipW = 190;
-  const tooltipH = 90;
+  const tooltipW = 180;
+  const tooltipH = 80;
   const pad = 16;
   const rawX = hover.screenX + pad;
   const rawY = hover.screenY - 10;
@@ -46,37 +42,26 @@ export const NexusTooltip = memo(function NexusTooltip({ viewerRef }: NexusToolt
   const clampedY = Math.max(8, Math.min(rawY, maxY));
 
   return (
-    <div
-      className="nexus-tooltip"
-      style={{ left: clampedX, top: clampedY }}
-    >
+    <div className="nexus-tooltip" style={{ left: clampedX, top: clampedY }}>
       <div className="nexus-tooltip__name">{name}</div>
       {entry ? (
         <div className="nexus-tooltip__rows">
           <div className="nexus-tooltip__row">
-            <span
-              className="nexus-tooltip__dot"
-              style={{ background: NEXUS_PHYSICAL_FILL }}
-            />
-            <span>Physical</span>
-            <span className={`nexus-tooltip__val ${entry.physical ? "nexus-tooltip__val--yes" : "nexus-tooltip__val--no"}`}>
-              {entry.physical ? "Yes" : "No"}
+            <span className="nexus-tooltip__row-label">Physical</span>
+            <span className={`nexus-tooltip__row-val${entry.physical ? " nexus-tooltip__row-val--yes" : ""}`}>
+              {entry.physical ? "YES" : "NO"}
             </span>
           </div>
           <div className="nexus-tooltip__row">
-            <span
-              className="nexus-tooltip__dot"
-              style={{ background: NEXUS_ECONOMIC_FILL }}
-            />
-            <span>Economic</span>
-            <span className={`nexus-tooltip__val ${entry.economic ? "nexus-tooltip__val--yes" : "nexus-tooltip__val--no"}`}>
-              {entry.economic ? "Yes" : "No"}
+            <span className="nexus-tooltip__row-label">Economic</span>
+            <span className={`nexus-tooltip__row-val${entry.economic ? " nexus-tooltip__row-val--yes" : ""}`}>
+              {entry.economic ? "YES" : "NO"}
             </span>
           </div>
         </div>
       ) : (
         <div className="nexus-tooltip__rows">
-          <span className="nexus-tooltip__no-data">No nexus data</span>
+          <span className="nexus-tooltip__no-data">No exposure data</span>
         </div>
       )}
     </div>
