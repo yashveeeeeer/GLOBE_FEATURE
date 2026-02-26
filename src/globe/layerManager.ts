@@ -7,7 +7,6 @@
  *   - highlight   : overlay for selected region
  *
  * Maintains an entity index (regionId → Entity) for O(1) lookups.
- * Stores source GeoJSON so layers can be rebuilt on theme change.
  */
 
 import {
@@ -52,9 +51,6 @@ export class LayerManager {
   private countryIndex: Record<string, string[]> = {};
   private filters: NexusFilters = { physical: true, economic: true };
 
-  private countriesGeo: RegionFeatureCollection | null = null;
-  private subregionsGeo: RegionFeatureCollection | null = null;
-
   constructor(viewer: Viewer) {
     this.viewer = viewer;
   }
@@ -63,7 +59,6 @@ export class LayerManager {
 
   async setCountries(geo: RegionFeatureCollection): Promise<void> {
     if (!alive(this.viewer)) return;
-    this.countriesGeo = geo;
 
     const wasHidden = this.countriesLayer ? !this.countriesLayer.show : false;
     this.removeLayer(this.countriesLayer);
@@ -86,7 +81,6 @@ export class LayerManager {
 
   async setSubregions(geo: RegionFeatureCollection): Promise<void> {
     if (!alive(this.viewer)) return;
-    this.subregionsGeo = geo;
     this.clearHighlight();
     this.clearSubregions();
 
@@ -113,7 +107,6 @@ export class LayerManager {
   clearSubregions(): void {
     this.removeLayer(this.subregionsLayer);
     this.subregionsLayer = null;
-    this.subregionsGeo = null;
   }
 
   /* ── Visibility toggles ───────────────────────────────────────────── */
@@ -252,7 +245,6 @@ export class LayerManager {
     this.clearSubregions();
     this.removeLayer(this.countriesLayer);
     this.countriesLayer = null;
-    this.countriesGeo = null;
     this.entityIndex.clear();
   }
 
