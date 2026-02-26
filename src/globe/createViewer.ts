@@ -25,28 +25,28 @@ import { isLightTheme } from "./globeTheme";
 
 function applySceneTheme(scene: Scene, light: boolean): void {
   if (light) {
-    scene.globe.baseColor = Color.fromCssColorString("#b8cde0");
-    scene.backgroundColor = Color.fromCssColorString("#d6e4f0");
+    scene.globe.baseColor = Color.WHITE;
+    scene.backgroundColor = Color.WHITE;
 
     if (scene.skyAtmosphere) {
-      scene.skyAtmosphere.brightnessShift = 0.0;
-      scene.skyAtmosphere.hueShift = 0.0;
-      scene.skyAtmosphere.saturationShift = 0.0;
+      scene.skyAtmosphere.show = false;
     }
-    scene.globe.atmosphereBrightnessShift = 0.05;
-    scene.globe.atmosphereSaturationShift = 0.0;
-    scene.fog.density = 1.5e-4;
+    scene.globe.showGroundAtmosphere = false;
+    scene.fog.enabled = false;
   } else {
     scene.globe.baseColor = Color.fromCssColorString("#0f1729");
     scene.backgroundColor = Color.fromCssColorString("#060a14");
 
     if (scene.skyAtmosphere) {
+      scene.skyAtmosphere.show = true;
       scene.skyAtmosphere.brightnessShift = -0.15;
       scene.skyAtmosphere.hueShift = -0.05;
       scene.skyAtmosphere.saturationShift = 0.1;
     }
+    scene.globe.showGroundAtmosphere = true;
     scene.globe.atmosphereBrightnessShift = -0.1;
     scene.globe.atmosphereSaturationShift = 0.15;
+    scene.fog.enabled = true;
     scene.fog.density = 2.0e-4;
   }
 }
