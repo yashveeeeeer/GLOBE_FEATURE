@@ -39,6 +39,7 @@ function createNightProvider(): WebMapTileServiceImageryProvider {
 }
 
 let _fadeRaf = 0;
+let _transitionToken = 0;
 
 function cancelPendingFade(): void {
   if (_fadeRaf) {
@@ -94,18 +95,30 @@ export async function setGlobeImagery(
 ): Promise<void> {
   if (!viewer || viewer.isDestroyed()) return;
   cancelPendingFade();
+  const token = ++_transitionToken;
 
   const layers = viewer.imageryLayers;
+  // Rapid theme toggles can leave multiple transitional layers alive.
+  // Collapse to a single stable base layer before starting a new transition.
+  if (layers.length > 1) {
+    const top = layers.get(layers.length - 1);
+    top.alpha = 1;
+    while (layers.length > 1) {
+      layers.remove(layers.get(0), true);
+    }
+  }
   const oldCount = layers.length;
+  const oldLayer = oldCount > 0 ? layers.get(oldCount - 1) : undefined;
 
   try {
     let newLayer: ImageryLayer;
     if (isLight) {
       const day = await createDayProvider();
-      if (viewer.isDestroyed()) return;
+      if (viewer.isDestroyed() || token !== _transitionToken) return;
       newLayer = layers.addImageryProvider(day);
     } else {
       const night = createNightProvider();
+      if (token !== _transitionToken) return;
       newLayer = layers.addImageryProvider(night);
     }
 
@@ -116,13 +129,17 @@ export async function setGlobeImagery(
 
     newLayer.alpha = 0;
     fadeLayer(viewer, newLayer, 0, 1, CROSSFADE_MS, () => {
-      if (viewer.isDestroyed()) return;
-      while (layers.length > 1) {
-        layers.remove(layers.get(0), true);
+      if (viewer.isDestroyed() || token !== _transitionToken) return;
+      for (let i = layers.length - 1; i >= 0; i--) {
+        const layer = layers.get(i);
+        if (layer !== newLayer) layers.remove(layer, true);
       }
     });
+    if (oldLayer) oldLayer.alpha = 1;
   } catch (err) {
     console.warn("[imagery] Failed to load imagery, falling back to base color", err);
-    layers.removeAll();
+    if (token === _transitionToken) {
+      layers.removeAll();
+    }
   }
 }

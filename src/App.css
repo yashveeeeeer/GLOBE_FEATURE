@@ -54,7 +54,7 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #07090F;
+  background: #fff;
   opacity: 1;
   transition: opacity var(--fade-ms, 800ms) ease-out;
 }

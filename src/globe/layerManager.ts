@@ -179,9 +179,8 @@ export class LayerManager {
   }
 
   /**
-   * Update outline colors on all country/subregion entities then force
-   * CesiumJS to refresh by removing and re-adding the data source.
-   * Fully synchronous — no async gap means no race conditions.
+   * Update outline colors on all country/subregion entities.
+   * Fully synchronous so theme toggles apply immediately.
    */
   recolorOutlines(isLight?: boolean): void {
     if (!alive(this.viewer)) return;
