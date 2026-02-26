@@ -12,6 +12,7 @@ import {
   Viewer,
   Ion,
   Color,
+  Cartesian3,
   type Scene,
 } from "cesium";
 import { setGlobeImagery } from "./imagery";
@@ -82,7 +83,7 @@ export function createViewer(container: HTMLElement | string): Viewer {
   // or zoom in closer than ~500m. Prevents the globe becoming a tiny dot
   // or the camera clipping into the surface.
   const controller = scene.screenSpaceCameraController;
-  controller.maximumZoomDistance = 25_000_000;
+  controller.maximumZoomDistance = 18_000_000;
   controller.minimumZoomDistance = 500;
   controller.enableZoom = true;
   controller.enableRotate = true;
@@ -91,6 +92,12 @@ export function createViewer(container: HTMLElement | string): Viewer {
   controller.enableTranslate = true;
 
   setGlobeImagery(viewer, isLightTheme());
+
+  // Set a comfortable initial camera position so the globe fills the pane
+  // nicely on widescreen PC monitors (~65 % of viewport).
+  viewer.camera.setView({
+    destination: Cartesian3.fromDegrees(0, 20, 15_000_000),
+  });
 
   return viewer;
 }

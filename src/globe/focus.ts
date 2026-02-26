@@ -82,7 +82,7 @@ export function focusToWorld(viewer: Viewer): void {
   if (!alive(viewer)) return;
   viewer.camera.cancelFlight();
   viewer.camera.flyTo({
-    destination: Cartesian3.fromDegrees(0, 20, 20_000_000),
+    destination: Cartesian3.fromDegrees(0, 20, 15_000_000),
     duration: DEFAULT_DURATION,
   });
 }
