@@ -47,7 +47,7 @@ export function LoadingScreen({ ready }: LoadingScreenProps) {
       <video
         ref={videoRef}
         className="loading-screen__video"
-        src="/assets/loading.mp4"
+        src={`${import.meta.env.BASE_URL}assets/loading.mp4`}
         muted
         autoPlay
         playsInline

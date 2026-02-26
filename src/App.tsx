@@ -81,14 +81,14 @@ export default function App() {
                 <div className="app__logo">
                   <img
                     className="app__logo-img app__logo-img--dark"
-                    src="/assets/logo-light.png"
+                    src={`${import.meta.env.BASE_URL}assets/logo-light.png`}
                     alt="Commenda"
                     width={28}
                     height={28}
                   />
                   <img
                     className="app__logo-img app__logo-img--light"
-                    src="/assets/logo-dark.png"
+                    src={`${import.meta.env.BASE_URL}assets/logo-dark.png`}
                     alt="Commenda"
                     width={28}
                     height={28}
