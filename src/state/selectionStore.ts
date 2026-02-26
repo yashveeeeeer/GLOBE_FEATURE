@@ -45,14 +45,14 @@ function hashToState(): SelectionState {
   if (parts.length >= 2) {
     return {
       selectionLevel: "subregion",
-      selectedCountryId: parts[0],
-      selectedSubregionId: parts[1],
+      selectedCountryId: parts[0] ?? null,
+      selectedSubregionId: parts[1] ?? null,
     };
   }
   if (parts.length === 1) {
     return {
       selectionLevel: "country",
-      selectedCountryId: parts[0],
+      selectedCountryId: parts[0] ?? null,
       selectedSubregionId: null,
     };
   }

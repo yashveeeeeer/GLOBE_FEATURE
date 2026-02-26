@@ -12,6 +12,7 @@
  */
 
 import { type Viewer, Math as CesiumMath } from "cesium";
+import { alive } from "./guards";
 
 /* ── Configuration ───────────────────────────────────────────────────── */
 
@@ -29,17 +30,10 @@ let _idleTimer: ReturnType<typeof setTimeout> | null = null;
 let _tickCallback: ((clock: unknown) => void) | null = null;
 let _viewer: Viewer | null = null;
 
-// DOM listener references (needed for removeEventListener)
 let _onPtrDown: (() => void) | null = null;
 let _onPtrUp: (() => void) | null = null;
 let _onWheel: (() => void) | null = null;
 let _canvas: HTMLCanvasElement | null = null;
-
-/* ── Helpers ─────────────────────────────────────────────────────────── */
-
-function alive(v: Viewer | null): v is Viewer {
-  return !!v && !v.isDestroyed();
-}
 
 function startRotation(): void {
   if (_rotating || !alive(_viewer)) return;

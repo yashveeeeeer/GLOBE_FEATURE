@@ -4,6 +4,9 @@
  * Tracks the entity under the cursor on the Cesium globe.
  * Uses ScreenSpaceEventHandler for MOUSE_MOVE to detect hovered entities.
  * Returns the hovered entity ID and screen position for tooltip placement.
+ *
+ * Position updates are throttled to ~60 fps to avoid excess re-renders
+ * when the cursor moves over the same entity.
  */
 
 import { useEffect, useState, useRef, type RefObject } from "react";
@@ -25,6 +28,7 @@ export interface HoverInfo {
 }
 
 const HOVER_ALPHA_BOOST = 0.18;
+const THROTTLE_MS = 16; // ~60 fps
 
 export function useGlobeHover(
   viewerRef: RefObject<CesiumViewer | null>,
@@ -33,6 +37,9 @@ export function useGlobeHover(
   const handlerRef = useRef<ScreenSpaceEventHandler | null>(null);
   const prevEntityRef = useRef<Entity | null>(null);
   const prevMaterialRef = useRef<ColorMaterialProperty | null>(null);
+  const rafRef = useRef<number>(0);
+  const lastUpdateRef = useRef<number>(0);
+  const pendingHoverRef = useRef<HoverInfo | null>(null);
 
   useEffect(() => {
     const check = () => {
@@ -60,6 +67,22 @@ export function useGlobeHover(
       }
       prevEntityRef.current = null;
       prevMaterialRef.current = null;
+    }
+
+    function scheduleHoverUpdate(info: HoverInfo | null) {
+      const now = performance.now();
+      pendingHoverRef.current = info;
+
+      if (now - lastUpdateRef.current >= THROTTLE_MS) {
+        lastUpdateRef.current = now;
+        setHover(info);
+      } else {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+          lastUpdateRef.current = performance.now();
+          setHover(pendingHoverRef.current);
+        });
+      }
     }
 
     function attach() {
@@ -101,19 +124,20 @@ export function useGlobeHover(
             }
           }
 
-          setHover({
+          scheduleHoverUpdate({
             entityId: entity.id,
             screenX: movement.endPosition.x,
             screenY: movement.endPosition.y,
           });
         } else {
           restorePrevious();
-          setHover(null);
+          scheduleHoverUpdate(null);
         }
       }, ScreenSpaceEventType.MOUSE_MOVE);
     }
 
     return () => {
+      cancelAnimationFrame(rafRef.current);
       restorePrevious();
       if (handlerRef.current) {
         handlerRef.current.destroy();

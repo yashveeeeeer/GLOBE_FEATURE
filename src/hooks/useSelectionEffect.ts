@@ -16,6 +16,7 @@ import { useSelectionStore } from "../state/selectionStore";
 import { getRegionEntry } from "../data/regionIndex";
 import { loadDataset } from "../data/loader";
 import {
+  alive,
   LayerManager,
   focusToRegion,
   focusToWorld,
@@ -24,10 +25,6 @@ import {
   disableAutoRotate,
 } from "../globe";
 import type { RegionFeatureCollection } from "../types";
-
-function viewerOk(v: CesiumViewer | null): v is CesiumViewer {
-  return !!v && !v.isDestroyed();
-}
 
 interface UseSelectionEffectArgs {
   viewerRef: RefObject<CesiumViewer | null>;
@@ -50,7 +47,7 @@ export function useSelectionEffect({
 
   useEffect(() => {
     if (dataVersion === 0) return;
-    if (!viewerOk(viewerRef.current) || !layersRef.current) return;
+    if (!alive(viewerRef.current) || !layersRef.current) return;
 
     const ac = new AbortController();
     const lm = layersRef.current;
@@ -64,7 +61,7 @@ export function useSelectionEffect({
           lm.showCountries();
           setFocusGeometry(countriesRef.current);
 
-          if (!ac.signal.aborted && viewerOk(viewerRef.current)) {
+          if (!ac.signal.aborted && alive(viewerRef.current)) {
             focusToWorld(viewerRef.current);
             enableAutoRotate(viewerRef.current);
           }
@@ -77,7 +74,7 @@ export function useSelectionEffect({
           lm.showSubregions();
           lm.clearHighlight();
 
-          if (!ac.signal.aborted && viewerOk(viewerRef.current)) {
+          if (!ac.signal.aborted && alive(viewerRef.current)) {
             focusToRegion(viewerRef.current, selectedCountryId, { mode: "bbox" });
           }
 
@@ -85,13 +82,10 @@ export function useSelectionEffect({
           if (entry?.childDatasetPath) {
             setSubLoading(true);
             try {
-              await new Promise((r) => setTimeout(r, 300));
-              if (ac.signal.aborted) return;
-
               const sub = await loadDataset(entry.childDatasetPath);
-              if (!ac.signal.aborted && viewerOk(viewerRef.current)) {
+              if (!ac.signal.aborted && alive(viewerRef.current)) {
                 lm.clearHighlight();
-                await lm.setSubregions(sub, selectedCountryId);
+                await lm.setSubregions(sub);
                 setFocusGeometry(sub);
               }
             } finally {
@@ -107,7 +101,7 @@ export function useSelectionEffect({
           const entry = getRegionEntry(selectedCountryId);
           if (entry?.childDatasetPath) {
             const sub = await loadDataset(entry.childDatasetPath);
-            if (!ac.signal.aborted && viewerOk(viewerRef.current)) {
+            if (!ac.signal.aborted && alive(viewerRef.current)) {
               await lm.highlight(selectedSubregionId, sub);
               focusToRegion(viewerRef.current, selectedSubregionId, { mode: "auto" });
             }

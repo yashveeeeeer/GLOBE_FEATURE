@@ -7,12 +7,8 @@
 
 import { useRef, useEffect } from "react";
 import type { Viewer as CesiumViewer } from "cesium";
-import { createViewer, LayerManager, disableAutoRotate } from "../globe";
+import { alive, createViewer, LayerManager, disableAutoRotate } from "../globe";
 import type { RegionFeatureCollection } from "../types";
-
-function viewerOk(v: CesiumViewer | null): v is CesiumViewer {
-  return !!v && !v.isDestroyed();
-}
 
 export function useGlobeViewer() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -25,17 +21,17 @@ export function useGlobeViewer() {
       disableAutoRotate();
       layersRef.current?.destroy();
       layersRef.current = null;
-      if (viewerOk(viewerRef.current)) viewerRef.current.destroy();
+      if (alive(viewerRef.current)) viewerRef.current.destroy();
       viewerRef.current = null;
     };
   }, []);
 
   const ensureViewer = () => {
-    if (!viewerOk(viewerRef.current) && mountRef.current) {
+    if (!alive(viewerRef.current) && mountRef.current) {
       viewerRef.current = createViewer(mountRef.current);
       layersRef.current = new LayerManager(viewerRef.current);
     }
   };
 
-  return { mountRef, viewerRef, layersRef, countriesRef, viewerOk, ensureViewer };
+  return { mountRef, viewerRef, layersRef, countriesRef, ensureViewer };
 }

@@ -20,18 +20,13 @@ import {
 import { getRegionEntry } from "../data/regionIndex";
 import { extractVertices } from "../geo/vertices";
 import { normalizeBBox, padBBox } from "../geo/antimeridian";
+import { alive } from "./guards";
 import type { BBox, FocusOptions, RegionFeatureCollection } from "../types";
 
 /* ── Defaults ────────────────────────────────────────────────────────── */
 
 const DEFAULT_DURATION = 1.5;
 const DEFAULT_PADDING = 0.1;
-
-/* ── Guards ──────────────────────────────────────────────────────────── */
-
-function alive(v: Viewer): boolean {
-  return !!v && !v.isDestroyed();
-}
 
 /* ── Geometry cache for sphere fits ──────────────────────────────────── */
 

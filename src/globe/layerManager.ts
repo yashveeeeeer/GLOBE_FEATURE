@@ -30,13 +30,14 @@ import {
   getNexusCategoryColor,
 } from "./styles";
 import { isLightTheme } from "./globeTheme";
+import { alive as _alive } from "./guards";
 import {
   isCountryBreached,
   getFilteredNexusCategory,
 } from "../state/nexusStore";
 
 function alive(v: Viewer): boolean {
-  return !!v && !v.isDestroyed() && !!v.dataSources;
+  return _alive(v) && !!v.dataSources;
 }
 
 export class LayerManager {
@@ -74,7 +75,7 @@ export class LayerManager {
 
   /* ── Subregions ──────────────────────────────────────────────────── */
 
-  async setSubregions(geo: RegionFeatureCollection, parentCountryId?: string): Promise<void> {
+  async setSubregions(geo: RegionFeatureCollection): Promise<void> {
     if (!alive(this.viewer)) return;
     this.clearHighlight();
     this.clearSubregions();
@@ -94,8 +95,8 @@ export class LayerManager {
     this.subregionsLayer = ds;
     this.rebuildIndex(ds);
 
-    if (parentCountryId && Object.keys(this.stateNexus).length > 0) {
-      this.colorSubregionEntities(ds, parentCountryId);
+    if (Object.keys(this.stateNexus).length > 0) {
+      this.recolorSubregions();
     }
   }
 
@@ -191,17 +192,6 @@ export class LayerManager {
   private recolorSubregions(): void {
     if (!this.subregionsLayer) return;
     for (const entity of this.subregionsLayer.entities.values) {
-      const id = entity.id;
-      if (!id || !entity.polygon) continue;
-      const category = getFilteredNexusCategory(this.stateNexus[id], this.filters);
-      entity.polygon.material = new ColorMaterialProperty(
-        getNexusCategoryColor(category),
-      );
-    }
-  }
-
-  private colorSubregionEntities(ds: GeoJsonDataSource, _parentCountryId: string): void {
-    for (const entity of ds.entities.values) {
       const id = entity.id;
       if (!id || !entity.polygon) continue;
       const category = getFilteredNexusCategory(this.stateNexus[id], this.filters);

@@ -90,29 +90,6 @@ export function createViewer(container: HTMLElement | string): Viewer {
   controller.enableLook = true;
   controller.enableTranslate = true;
 
-  // Force-hide Cesium's error panel and any other element showing "connection failed"
-  // (except our sidebar). Search entire document.
-  const hideErrorPanels = (): void => {
-    document.querySelectorAll(".cesium-widget-errorPanel").forEach((el) => {
-      (el as HTMLElement).style.setProperty("display", "none", "important");
-    });
-    // Hide any element with cesium/error in class that contains "connection failed" text.
-    document.querySelectorAll("[class*='cesium'][class*='error'], [class*='cesium-widget']").forEach((el) => {
-      const elHtml = el as HTMLElement;
-      if (elHtml.closest(".app__sidebar")) return; // don't touch our sidebar
-      const text = (elHtml.textContent || "").toLowerCase();
-      if (text.includes("connection") && text.includes("fail")) {
-        elHtml.style.setProperty("display", "none", "important");
-      }
-    });
-  };
-  hideErrorPanels();
-  const obs = new MutationObserver(hideErrorPanels);
-  const root: HTMLElement | null =
-    typeof container === "string" ? document.querySelector(container) : container;
-  if (root) obs.observe(root, { childList: true, subtree: true });
-  obs.observe(document.body, { childList: true, subtree: true });
-
   setGlobeImagery(viewer, isLightTheme());
 
   return viewer;

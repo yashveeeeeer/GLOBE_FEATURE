@@ -17,6 +17,7 @@ import { useNexusStore } from "./state/nexusStore";
 
 import { Breadcrumb } from "./ui/Breadcrumb";
 import { RegionTable } from "./ui/RegionTable";
+import { StatsBar } from "./ui/StatsBar";
 import { ErrorBanner } from "./ui/ErrorBanner";
 import { ThemeToggle } from "./ui/ThemeToggle";
 import { NexusLegend } from "./ui/NexusLegend";
@@ -94,6 +95,7 @@ export default function App() {
         </header>
 
         <FilterPanel />
+        <StatsBar dataVersion={dataVersion} />
 
         {error ? (
           <ErrorBanner message={error} onRetry={() => boot()} />

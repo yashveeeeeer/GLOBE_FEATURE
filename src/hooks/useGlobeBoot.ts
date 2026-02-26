@@ -12,16 +12,13 @@ import { loadRegionIndex } from "../data/regionIndex";
 import { loadDataset } from "../data/loader";
 import { validateNexusData } from "../data/schema";
 import {
+  alive,
   LayerManager,
   setFocusGeometry,
   enableAutoRotate,
 } from "../globe";
 import { useNexusStore } from "../state/nexusStore";
 import type { RegionFeatureCollection, NexusDataFile } from "../types";
-
-function viewerOk(v: CesiumViewer | null): v is CesiumViewer {
-  return !!v && !v.isDestroyed();
-}
 
 interface UseGlobeBootArgs {
   viewerRef: RefObject<CesiumViewer | null>;
@@ -52,16 +49,16 @@ export function useGlobeBoot({
       if (signal?.aborted) return;
       setDataVersion((v) => v + 1);
 
-      if (!viewerOk(viewerRef.current)) return;
+      if (!alive(viewerRef.current)) return;
 
       const base = import.meta.env.BASE_URL;
-      const geo = await loadDataset(`${base}data/countries.geo.json`);
+      const geo = await loadDataset(`${base}data/countries.topo.json`);
       if (signal?.aborted) return;
 
       countriesRef.current = geo;
       setFocusGeometry(geo);
 
-      if (!viewerOk(viewerRef.current) || !layersRef.current) return;
+      if (!alive(viewerRef.current) || !layersRef.current) return;
       await layersRef.current.setCountries(geo);
       if (signal?.aborted) return;
 
@@ -80,7 +77,7 @@ export function useGlobeBoot({
       }
 
       if (signal?.aborted) return;
-      if (!viewerOk(viewerRef.current)) return;
+      if (!alive(viewerRef.current)) return;
 
       enableAutoRotate(viewerRef.current);
       setGlobeReady(true);
