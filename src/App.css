@@ -45,6 +45,58 @@ body,
   scrollbar-color: var(--border) transparent;
 }
 
+/* ── Full-screen loading overlay ─────────────────────────────────────── */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 1;
+  transition: opacity var(--fade-ms, 600ms) ease-out;
+}
+
+.loading-screen--fade {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-screen__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loading-screen__overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  pointer-events: none;
+}
+
+.loading-screen__text {
+  font-family: var(--font-family, "Inter", sans-serif);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  animation: loading-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 /* ── App layout ──────────────────────────────────────────────────────── */
 
 .app {
@@ -89,70 +141,6 @@ body,
   display: none !important;
 }
 
-.app__loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  background: var(--bg);
-  z-index: 10;
-}
-
-.app__loading-globe {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--surface-2), var(--bg));
-  box-shadow:
-    0 0 60px color-mix(in srgb, var(--accent) 20%, transparent),
-    0 0 120px color-mix(in srgb, var(--accent) 8%, transparent),
-    inset 0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
-  animation: pulse-globe 2s ease-in-out infinite;
-  position: relative;
-  will-change: transform, opacity;
-}
-
-.app__loading-globe::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
-  animation: pulse-ring 2s ease-in-out infinite;
-}
-
-.app__loading-globe::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  border-top-color: var(--accent);
-  border-right-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  animation: spin 1.2s linear infinite;
-  will-change: transform;
-}
-
-.app__loading-text {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-@keyframes pulse-globe {
-  0%, 100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.08); opacity: 1; }
-}
-
-@keyframes pulse-ring {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(1.15); opacity: 0.6; }
-}
 
 /* ── Sidebar ─────────────────────────────────────────────────────────── */
 
@@ -190,29 +178,33 @@ body,
 .app__logo {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow:
-    0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
 }
 
 .app__logo:hover {
-  transform: scale(1.05);
-  box-shadow:
-    0 4px 14px color-mix(in srgb, var(--accent) 45%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  transform: scale(1.08);
 }
 
-.app__logo svg {
-  width: 18px;
-  height: 18px;
-  color: var(--accent-contrast);
+.app__logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.app__logo-img--light {
+  display: none;
+}
+
+.theme-light .app__logo-img--dark {
+  display: none;
+}
+
+.theme-light .app__logo-img--light {
+  display: block;
 }
 
 .app__brand-text {

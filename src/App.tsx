@@ -3,6 +3,9 @@
  *
  * Two-pane layout: Globe (left 65%) + Sidebar (right 35%).
  * Composes custom hooks for viewer lifecycle, boot, selection, and input.
+ *
+ * A full-screen video loading screen covers everything until all data
+ * is fetched and the globe is interactive — zero visible lag.
  */
 
 import { useEffect } from "react";
@@ -24,6 +27,7 @@ import { NexusLegend } from "./ui/NexusLegend";
 import { FilterPanel } from "./ui/FilterPanel";
 import { NexusTooltip } from "./ui/NexusTooltip";
 import { GlobeErrorBoundary } from "./ui/GlobeErrorBoundary";
+import { LoadingScreen } from "./ui/LoadingScreen";
 
 import "./App.css";
 
@@ -58,51 +62,58 @@ export default function App() {
   /* ── Render ────────────────────────────────────────────────────────── */
 
   return (
-    <div className="app">
-      <GlobeErrorBoundary>
-        <div className="app__globe">
-          <div className="app__globe-mount" ref={mountRef} />
-          {globeReady && <NexusLegend />}
-          {globeReady && <NexusTooltip viewerRef={viewerRef} />}
-          {!globeReady && (
-            <div className="app__loading">
-              <div className="app__loading-globe" />
-              <span className="app__loading-text">Loading globe…</span>
-            </div>
-          )}
-        </div>
-      </GlobeErrorBoundary>
+    <>
+      <LoadingScreen ready={globeReady} />
 
-      <aside className="app__sidebar">
-        <header className="app__sidebar-header">
-          <div className="app__sidebar-header-row">
-            <div className="app__brand">
-              <div className="app__logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
-              </div>
-              <div className="app__brand-text">
-                <h1 className="app__title">Commenda</h1>
-                <span className="app__subtitle">Nexus Exposure Map</span>
-              </div>
-            </div>
-            <ThemeToggle />
+      <div className="app">
+        <GlobeErrorBoundary>
+          <div className="app__globe">
+            <div className="app__globe-mount" ref={mountRef} />
+            {globeReady && <NexusLegend />}
+            {globeReady && <NexusTooltip viewerRef={viewerRef} />}
           </div>
-          <Breadcrumb />
-        </header>
+        </GlobeErrorBoundary>
 
-        <FilterPanel />
-        <StatsBar dataVersion={dataVersion} />
+        <aside className="app__sidebar">
+          <header className="app__sidebar-header">
+            <div className="app__sidebar-header-row">
+              <div className="app__brand">
+                <div className="app__logo">
+                  <img
+                    className="app__logo-img app__logo-img--dark"
+                    src="/assets/logo-light.png"
+                    alt="Commenda"
+                    width={28}
+                    height={28}
+                  />
+                  <img
+                    className="app__logo-img app__logo-img--light"
+                    src="/assets/logo-dark.png"
+                    alt="Commenda"
+                    width={28}
+                    height={28}
+                  />
+                </div>
+                <div className="app__brand-text">
+                  <h1 className="app__title">Commenda</h1>
+                  <span className="app__subtitle">Nexus Exposure Map</span>
+                </div>
+              </div>
+              <ThemeToggle />
+            </div>
+            <Breadcrumb />
+          </header>
 
-        {error ? (
-          <ErrorBanner message={error} onRetry={() => boot()} />
-        ) : (
-          <RegionTable dataVersion={dataVersion} loading={subLoading} />
-        )}
-      </aside>
-    </div>
+          <FilterPanel />
+          <StatsBar dataVersion={dataVersion} />
+
+          {error ? (
+            <ErrorBanner message={error} onRetry={() => boot()} />
+          ) : (
+            <RegionTable dataVersion={dataVersion} loading={subLoading} />
+          )}
+        </aside>
+      </div>
+    </>
   );
 }
