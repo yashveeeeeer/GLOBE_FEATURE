@@ -187,10 +187,15 @@ export class LayerManager {
     const light = isLight ?? isLightTheme();
     const outlineColor = getRegionOutlineColor(light);
 
-    for (const layer of [this.countriesLayer, this.subregionsLayer]) {
+    for (const layer of [
+      this.countriesLayer,
+      this.subregionsLayer,
+      this.highlightLayer,
+    ]) {
       if (!layer) continue;
       for (const entity of layer.entities.values) {
         if (entity.polygon) {
+          entity.polygon.outline = new ConstantProperty(true) as never;
           entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
         }
         if (entity.polyline) {
