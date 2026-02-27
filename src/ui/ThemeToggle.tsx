@@ -5,7 +5,7 @@
  * .theme-light class on <html>. Persists choice in localStorage.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useLayoutEffect, useCallback } from "react";
 
 const STORAGE_KEY = "commenda-theme";
 
@@ -18,8 +18,8 @@ export function ThemeToggle() {
     }
   });
 
-  // Apply class on mount and whenever isLight changes
-  useEffect(() => {
+  // Apply class + broadcast before paint for immediate visual parity.
+  useLayoutEffect(() => {
     const root = document.documentElement;
     if (isLight) {
       root.classList.add("theme-light");

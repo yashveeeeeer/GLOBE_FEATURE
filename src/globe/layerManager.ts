@@ -50,6 +50,7 @@ export class LayerManager {
   private stateNexus: NexusStateData = {};
   private countryIndex: Record<string, string[]> = {};
   private filters: NexusFilters = { physical: true, economic: true };
+  private outlineIsLight = isLightTheme();
 
   constructor(viewer: Viewer) {
     this.viewer = viewer;
@@ -64,12 +65,13 @@ export class LayerManager {
     this.removeLayer(this.countriesLayer);
 
     const ds = await this.loadGeo(geo, {
-      stroke: getRegionOutlineColor(isLightTheme()),
+      stroke: getRegionOutlineColor(this.outlineIsLight),
       strokeWidth: REGION_OUTLINE_WIDTH,
       fill: Color.TRANSPARENT,
     });
     if (!ds || !alive(this.viewer)) return;
 
+    this.applyOutlineColorToLayer(ds, getRegionOutlineColor(this.outlineIsLight));
     ds.name = "countries";
     if (wasHidden) ds.show = false;
     this.viewer.dataSources.add(ds);
@@ -88,12 +90,13 @@ export class LayerManager {
     if (!alive(this.viewer)) return;
 
     const ds = await this.loadGeo(geo, {
-      stroke: getRegionOutlineColor(isLightTheme()),
+      stroke: getRegionOutlineColor(this.outlineIsLight),
       strokeWidth: REGION_OUTLINE_WIDTH,
       fill: Color.TRANSPARENT,
     });
     if (!ds || !alive(this.viewer)) return;
 
+    this.applyOutlineColorToLayer(ds, getRegionOutlineColor(this.outlineIsLight));
     ds.name = "subregions";
     this.viewer.dataSources.add(ds);
     this.subregionsLayer = ds;
@@ -184,8 +187,8 @@ export class LayerManager {
    */
   recolorOutlines(isLight?: boolean): void {
     if (!alive(this.viewer)) return;
-    const light = isLight ?? isLightTheme();
-    const outlineColor = getRegionOutlineColor(light);
+    this.outlineIsLight = isLight ?? isLightTheme();
+    const outlineColor = getRegionOutlineColor(this.outlineIsLight);
 
     for (const layer of [
       this.countriesLayer,
@@ -193,17 +196,10 @@ export class LayerManager {
       this.highlightLayer,
     ]) {
       if (!layer) continue;
-      for (const entity of layer.entities.values) {
-        if (entity.polygon) {
-          entity.polygon.outline = new ConstantProperty(true) as never;
-          entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
-        }
-        if (entity.polyline) {
-          entity.polyline.material = new ColorMaterialProperty(outlineColor);
-        }
-      }
+      this.applyOutlineColorToLayer(layer, outlineColor);
     }
 
+    this.viewer.scene.requestRender();
     document.dispatchEvent(new Event("outline-recolor"));
   }
 
@@ -290,6 +286,18 @@ export class LayerManager {
         if (entity.id) {
           this.entityIndex.set(entity.id, entity);
         }
+      }
+    }
+  }
+
+  private applyOutlineColorToLayer(layer: GeoJsonDataSource, color: Color): void {
+    for (const entity of layer.entities.values) {
+      if (entity.polygon) {
+        entity.polygon.outline = new ConstantProperty(true) as never;
+        entity.polygon.outlineColor = new ConstantProperty(color) as never;
+      }
+      if (entity.polyline) {
+        entity.polyline.material = new ColorMaterialProperty(color);
       }
     }
   }
