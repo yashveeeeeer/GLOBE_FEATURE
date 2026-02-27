@@ -75,6 +75,7 @@ export class LayerManager {
     this.viewer.dataSources.add(ds);
     this.countriesLayer = ds;
     this.rebuildIndex(ds);
+    this.recolorOutlines();
   }
 
   /* ── Subregions ──────────────────────────────────────────────────── */
@@ -98,6 +99,7 @@ export class LayerManager {
     this.viewer.dataSources.add(ds);
     this.subregionsLayer = ds;
     this.rebuildIndex(ds);
+    this.recolorOutlines();
 
     if (Object.keys(this.stateNexus).length > 0) {
       this.recolorSubregions();
@@ -196,14 +198,30 @@ export class LayerManager {
       for (const entity of layer.entities.values) {
         if (entity.polygon) {
           entity.polygon.outline = new ConstantProperty(true) as never;
-          entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
+          const oc = entity.polygon.outlineColor;
+          if (oc && typeof (oc as unknown as { setValue?: (v: Color) => void }).setValue === "function") {
+            (oc as unknown as { setValue: (v: Color) => void }).setValue(outlineColor);
+          } else {
+            entity.polygon.outlineColor = new ConstantProperty(outlineColor) as never;
+          }
         }
         if (entity.polyline) {
-          entity.polyline.material = new ColorMaterialProperty(outlineColor);
+          const mat = entity.polyline.material;
+          if (mat instanceof ColorMaterialProperty && mat.color) {
+            const colorProp = mat.color as { setValue?: (c: Color) => void };
+            if (typeof colorProp.setValue === "function") {
+              colorProp.setValue(outlineColor);
+            } else {
+              entity.polyline.material = new ColorMaterialProperty(outlineColor);
+            }
+          } else {
+            entity.polyline.material = new ColorMaterialProperty(outlineColor);
+          }
         }
       }
     }
 
+    this.viewer.scene.requestRender();
     document.dispatchEvent(new Event("outline-recolor"));
   }
 

@@ -38,7 +38,23 @@ export function ThemeToggle() {
     );
   }, [isLight]);
 
-  const toggle = useCallback(() => setIsLight((v) => !v), []);
+  const toggle = useCallback(() => {
+    const next = !isLight;
+    // Sync DOM and storage immediately so isLightTheme() and CSS are correct
+    // when theme-change listeners run (globe boundaries, scene, imagery).
+    const root = document.documentElement;
+    if (next) root.classList.add("theme-light");
+    else root.classList.remove("theme-light");
+    try {
+      localStorage.setItem(STORAGE_KEY, next ? "light" : "dark");
+    } catch {
+      /* ignore */
+    }
+    document.dispatchEvent(
+      new CustomEvent("theme-change", { detail: { isLight: next } }),
+    );
+    setIsLight(next);
+  }, [isLight]);
 
   return (
     <button
