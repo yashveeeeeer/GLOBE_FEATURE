@@ -211,7 +211,7 @@ export const RegionTable = memo(function RegionTable({ dataVersion, loading }: R
   const handleRowHover = useCallback(
     (_id: string, entry: RegionIndexEntry) => {
       if (entry.level === "country" && entry.childDatasetPath) {
-        prefetchDataset(`${import.meta.env.BASE_URL}${entry.childDatasetPath}`);
+        prefetchDataset(entry.childDatasetPath);
       }
     },
     [],
